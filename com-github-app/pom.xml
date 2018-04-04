@@ -13,6 +13,10 @@
         <module>com-github-app-api</module>
         <module>com-github-app-runner</module>
         <module>distribution</module>
+        <module>buffer-protocol</module>
+        <module>buffer-coder</module>
+        <module>com-github-app-daemon</module>
+        <module>com-github-app-gate</module>
     </modules>
 
     <properties>

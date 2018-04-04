@@ -16,6 +16,7 @@
                 <include>*:*runner</include>
                 <include>*:*api</include>
                 <include>*:*utils</include>
+                <include>*:*protocol</include>
             </includes>
             <binaries>
                 <outputDirectory>classes</outputDirectory>

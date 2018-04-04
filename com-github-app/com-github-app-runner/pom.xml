@@ -19,6 +19,11 @@
             <artifactId>com-github-app-api</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.app.daemon</groupId>
+            <artifactId>com-github-app-daemon</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <!--
