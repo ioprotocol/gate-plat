@@ -24,6 +24,11 @@
             <artifactId>buffer-coder</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.app.ruler</groupId>
+            <artifactId>com-github-app-ruler</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
 </project>

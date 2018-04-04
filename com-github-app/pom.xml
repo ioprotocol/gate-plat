@@ -17,6 +17,7 @@
         <module>buffer-coder</module>
         <module>com-github-app-daemon</module>
         <module>com-github-app-gate</module>
+        <module>com-github-app-ruler</module>
     </modules>
 
     <properties>
