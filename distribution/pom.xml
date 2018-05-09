@@ -41,7 +41,6 @@
                             <workingDirectory>${basedir}/../com-github-app-ui</workingDirectory>
                         </configuration>
                     </execution>
-
                 </executions>
             </plugin>
             <plugin>
