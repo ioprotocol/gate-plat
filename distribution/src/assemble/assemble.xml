@@ -28,6 +28,11 @@
             <directory>${basedir}/../bin</directory>
             <fileMode>755</fileMode>
         </fileSet>
+        <fileSet>
+            <directory>${basedir}/../com-github-app-ui/dist</directory>
+            <outputDirectory>web</outputDirectory>
+            <fileMode>755</fileMode>
+        </fileSet>
     </fileSets>
     <files>
         <file>
