@@ -9,15 +9,15 @@
     <packaging>pom</packaging>
     <version>1.0.0</version>
     <modules>
+        <module>com-github-runner</module>
         <module>com-github-app-utils</module>
         <module>com-github-app-api</module>
-        <module>com-github-app-runner</module>
+        <module>com-github-gate-protocol</module>
+        <module>com-github-gate-coder</module>
+        <module>com-github-gate-daemon</module>
+        <module>com-github-gate-server</module>
+        <module>com-github-gate-ruler</module>
         <module>distribution</module>
-        <module>buffer-protocol</module>
-        <module>buffer-coder</module>
-        <module>com-github-app-daemon</module>
-        <module>com-github-app-gate</module>
-        <module>com-github-app-ruler</module>
     </modules>
 
     <properties>
