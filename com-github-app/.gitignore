@@ -1,8 +1,0 @@
-*.iml
-target
-.vertx
-.idea
-*.log
-*.tar.gz
-com-github-app-ui/node_modules/*
-node_modules

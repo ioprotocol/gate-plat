@@ -3,12 +3,6 @@ target
 .vertx
 .idea
 *.log
-*.gz
 *.tar.gz
 com-github-app-ui/node_modules/*
 node_modules
-*.jar
-application-home/libs/*.jar
-application-home/plugins/*.jar
-application-home/data/cache/*
-application-home/web/*
