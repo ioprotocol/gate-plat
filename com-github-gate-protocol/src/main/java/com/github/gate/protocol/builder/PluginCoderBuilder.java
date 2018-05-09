@@ -1,6 +1,5 @@
 package com.github.gate.protocol.builder;
 
-import com.foton.buffer.protocol.type.*;
 import com.github.gate.protocol.plugin.CoderPlugin;
 import com.github.gate.protocol.type.CoderProperties;
 import com.github.gate.protocol.type.LengthProperties;

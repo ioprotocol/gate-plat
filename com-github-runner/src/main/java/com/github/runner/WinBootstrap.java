@@ -1,4 +1,4 @@
-package com.github.app.runner;
+package com.github.runner;
 
 import com.github.app.api.utils.ConfigLoader;
 import com.github.app.api.verticles.HttpServerVerticle;

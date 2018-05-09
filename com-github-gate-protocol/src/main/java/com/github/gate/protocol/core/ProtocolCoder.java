@@ -1,9 +1,8 @@
 package com.github.gate.protocol.core;
 
 import com.github.gate.protocol.core.coder.ModuleCoder;
-import com.foton.buffer.protocol.type.*;
-import com.github.gate.protocol.utils.RangeUtils;
 import com.github.gate.protocol.type.*;
+import com.github.gate.protocol.utils.RangeUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.ByteBufUtil;

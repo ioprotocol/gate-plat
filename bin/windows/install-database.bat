@@ -23,5 +23,5 @@ SetLocal
 rem specify the server which want to be run
 set EXTRA_ARGS=-name INSTALL -loggc
 set KAFKA_HEAP_OPTS=-Xmx1G -Xms1G
-%~dp0run-class.bat com.github.app.runner.ApplicationBoot %*
+%~dp0run-class.bat com.github.runner.ApplicationBoot %*
 EndLocal

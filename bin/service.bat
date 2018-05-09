@@ -222,8 +222,8 @@ set KAFKA_GC_LOG_OPTS=-Xloggc:%CATALINA_BASE%\logs\%GC_LOG_FILE_NAME%;-verbose:g
     --StopMode jvm ^
     --StartPath "%CATALINA_HOME%" ^
     --StopPath "%CATALINA_HOME%" ^
-    --StartClass com.github.app.runner.WinBootstrap ^
-    --StopClass com.github.app.runner.WinBootstrap ^
+    --StartClass com.github.runner.WinBootstrap ^
+    --StopClass com.github.runner.WinBootstrap ^
 	--StartMethod "start" ^
 	--StopMethod "stop" ^
     --StartParams "%CATALINA_BASE%" ^

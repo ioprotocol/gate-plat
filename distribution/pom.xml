@@ -12,6 +12,13 @@
     <groupId>com.github.app.distribution</groupId>
     <artifactId>distribution</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.github.runner</groupId>
+            <artifactId>com-github-runner</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
     <build>
         <plugins>
             <plugin>
@@ -23,11 +30,12 @@
                         <id>create-binary</id>
                         <phase>package</phase>
                         <goals>
-                            <goal>
-                                single
-                            </goal>
+                            <goal>single</goal>
                         </goals>
                         <configuration>
+                            <attach>false</attach>
+                            <!--<tarLongFileMode>posix</tarLongFileMode>-->
+                            <finalName>com-github-${project.version}</finalName>
                             <descriptors>
                                 <descriptor>src/assemble/assemble.xml</descriptor>
                             </descriptors>

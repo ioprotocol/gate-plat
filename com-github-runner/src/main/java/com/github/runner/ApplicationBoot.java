@@ -1,4 +1,4 @@
-package com.github.app.runner;
+package com.github.runner;
 
 import com.github.app.api.services.impl.MySqlOperationServiceImpl;
 import com.github.app.api.utils.ConfigLoader;
