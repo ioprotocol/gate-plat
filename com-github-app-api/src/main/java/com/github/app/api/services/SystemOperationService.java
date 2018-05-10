@@ -1,17 +1,14 @@
 package com.github.app.api.services;
 
+import com.github.app.api.config.AppServerConfig;
 import io.vertx.core.json.JsonObject;
 
 public interface SystemOperationService {
-    /**
-     *
-     * @param jsonObject
-     */
-    void install(JsonObject jsonObject);
+    void install(AppServerConfig serverConfig);
 
-    void backup(JsonObject jsonObject);
+    void backup(AppServerConfig serverConfig);
 
-    void restore(JsonObject jsonObject, String fileName);
+    void restore(AppServerConfig serverConfig, String fileName);
 
     JsonObject list(Integer offset, Integer rows);
 

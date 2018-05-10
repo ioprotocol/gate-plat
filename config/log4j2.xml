@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN" monitorInterval="1800">
 	<Properties>
-		<Property name="LOG_HOME">${env:vertx.home}/logs</Property>
+		<Property name="LOG_HOME">${env:VERTX_HOME}/logs</Property>
 
 		<!-- 日志备份目录 -->
-		<Property name="BACKUP_HOME">${env:vertx.home}/logs/backup</Property>
+		<Property name="BACKUP_HOME">${env:VERTX_HOME}/logs/backup</Property>
 		<Property name="SERVER_NAME">vertx</Property>
 		<Property name="EVERY_MAX_FILE_NUM">5000</Property><!-- 日志文件最大个数 -->
 		<Property name="EVERY_FILE_SIZE">10M</Property><!-- 日志切割的最小单位 -->

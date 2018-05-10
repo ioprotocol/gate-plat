@@ -4,10 +4,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.github.app.api.config.AppServerConfig;
 import com.github.app.api.config.SpringApplication;
 import com.github.app.api.dao.domain.Popedom;
 import com.github.app.api.handler.UriHandler;
 import com.github.app.api.plugin.ApiMetricTimeMeterHandler;
+import com.github.app.api.services.DBAutoInit;
 import com.github.app.api.utils.PopedomContext;
 import com.github.app.utils.ServerEnvConstant;
 import io.vertx.core.AbstractVerticle;
@@ -16,7 +18,6 @@ import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.json.Json;
-import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.JksOptions;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.*;
@@ -47,14 +48,24 @@ public class HttpServerVerticle extends AbstractVerticle {
         vertx.executeBlocking(future-> {
             applicationContext = new AnnotationConfigApplicationContext(SpringApplication.class);
 
-            JsonObject jsonObject = config();
+            AppServerConfig serverConfig  = config().mapTo(AppServerConfig.class);
 
-            JsonObject httpsOption = jsonObject.getJsonObject("https.option");
+            if (serverConfig.isDataSourceAutoInit()) {
+                DBAutoInit dbAutoInit = applicationContext.getBean(DBAutoInit.class);
+                try {
+                    dbAutoInit.init();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    startFuture.fail(e);
+                    return;
+                }
+            }
 
             HttpServerOptions options = new HttpServerOptions().setSsl(false);
-            if (httpsOption.getBoolean("enable")) {
+            if (serverConfig.isTlsEnabled()) {
                 options.setSsl(true);
-                options.setKeyCertOptions(new JksOptions().setPath(httpsOption.getJsonObject("keyCert").getString("path")).setPassword(httpsOption.getJsonObject("keyCert").getString("password")));
+                options.setKeyCertOptions(new JksOptions().setPath(ServerEnvConstant.getAppServerCfgFilePath(serverConfig.getTlsCertificateFilePath()))
+                        .setPassword(serverConfig.getTlsCertificatePassword()));
             } else {
                 options.setSsl(false);
             }
@@ -65,7 +76,7 @@ public class HttpServerVerticle extends AbstractVerticle {
 
             setupRouter(router);
 
-            server.requestHandler(router::accept).listen(jsonObject.getInteger("api.bind.port", 8080), ar -> {
+            server.requestHandler(router::accept).listen(serverConfig.getApiPort(), ar -> {
                 if (ar.succeeded()) {
                     logger.info("api server start successfully, bind port: " + server.actualPort());
                     future.complete();

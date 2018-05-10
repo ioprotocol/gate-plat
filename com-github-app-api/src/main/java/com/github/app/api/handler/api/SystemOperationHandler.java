@@ -1,9 +1,10 @@
 package com.github.app.api.handler.api;
 
+import com.github.app.api.config.AppServerConfig;
 import com.github.app.api.dao.domain.Popedom;
 import com.github.app.api.handler.UriHandler;
 import com.github.app.api.services.SystemOperationService;
-import com.github.app.api.utils.ConfigLoader;
+import com.github.app.api.utils.AppServerConfigLoader;
 import com.github.app.api.utils.RequestUtils;
 import com.github.app.utils.ServerEnvConstant;
 import io.vertx.core.MultiMap;
@@ -74,7 +75,7 @@ public class SystemOperationHandler implements UriHandler {
 	}
 
 	public void backup(RoutingContext routingContext) {
-		JsonObject config = ConfigLoader.getServerCfg();
+		AppServerConfig config = AppServerConfigLoader.getServerCfg();
 		operationService.backup(config);
 		responseSuccess(routingContext);
 	}
@@ -97,7 +98,7 @@ public class SystemOperationHandler implements UriHandler {
 			return;
 		}
 
-		JsonObject config = ConfigLoader.getServerCfg();
+		AppServerConfig config = AppServerConfigLoader.getServerCfg();
 
 		operationService.restore(config, list.get(0));
 		responseSuccess(routingContext);

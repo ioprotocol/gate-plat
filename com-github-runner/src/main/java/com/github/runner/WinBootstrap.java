@@ -1,11 +1,12 @@
 package com.github.runner;
 
-import com.github.app.api.utils.ConfigLoader;
+import com.github.app.api.utils.AppServerConfigLoader;
 import com.github.app.api.verticles.HttpServerVerticle;
 import com.github.app.utils.ServerEnvConstant;
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
+import io.vertx.core.json.JsonObject;
 import io.vertx.ext.dropwizard.DropwizardMetricsOptions;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -30,7 +31,7 @@ public class WinBootstrap {
         ApplicationBoot.setup();
 
         DeploymentOptions deploymentOptions = new DeploymentOptions();
-        deploymentOptions.setConfig(ConfigLoader.getServerCfg());
+        deploymentOptions.setConfig(JsonObject.mapFrom(AppServerConfigLoader.getServerCfg()));
         vertx = Vertx.vertx(new VertxOptions()
                 .setMetricsOptions(new DropwizardMetricsOptions().setJmxEnabled(true)));
         vertx.deployVerticle(HttpServerVerticle.class, deploymentOptions, ar -> {

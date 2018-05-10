@@ -2,13 +2,15 @@ package com.github.app.utils;
 
 import java.io.File;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * 用户可以通过指定环境变量或系统属性，来改变程序的配置
  */
 public class ServerEnvConstant {
-    public static final String APP_HOME = "vertx.home";
-    public static final String APP_LOG4J2_CFG_FILE = "vertx.log4j2.config";
-    public static final String APP_SERVER_CFG_FILE = "vertx.server.config";
+    public static final String APP_HOME = "VERTX_HOME";
+    public static final String APP_LOG4J2_CFG_FILE = "VERTX_LOG4J2_CONFIG";
+    public static final String APP_SERVER_CFG_FILE = "VERTX_SERVER_CONFIG";
 
     /**
      * 获取log4j配置文件位置
@@ -32,9 +34,27 @@ public class ServerEnvConstant {
     public static String getAppServerCfgFilePath() {
         String path = getSystemEnv(APP_SERVER_CFG_FILE);
         if (path == null || path.length() < 1) {
-            path = getAppServerHome() + File.separator + "config" + File.separator + "server.json";
+            path = getAppServerHome() + File.separator + "config" + File.separator + "server.conf";
         }
         return path;
+    }
+
+    /**
+     * 获取配置文件的默认存放目录
+     *
+     * @return
+     */
+    public static String getAppServerCfgFilePath(String path) {
+        return getAppServerHome() + File.separator + "config" + File.separator + path;
+    }
+
+    /**
+     * 获取数据库的初始化脚本
+     *
+     * @return
+     */
+    public static String getAppServerDBInitSQLFilePath() {
+        return getAppServerHome() + File.separator + "data" + File.separator + "dbinit.sql";
     }
 
     /**
@@ -44,11 +64,7 @@ public class ServerEnvConstant {
      */
     public static String getAppServerHome() {
         String path = getSystemEnv(APP_HOME);
-
-        if (path == null || path.length() < 1) {
-            throw new RuntimeException("system env:" + APP_HOME + " is empty");
-        }
-
+        checkNotNull(path, "system env:VERTX_HOME is empty");
         return path;
     }
 

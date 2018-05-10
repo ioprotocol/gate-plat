@@ -1,22 +1,17 @@
 package com.github.app.api.handler.interceptor;
 
+import com.github.app.api.config.AppServerConfig;
 import com.github.app.api.dao.domain.Account;
 import com.github.app.api.dao.domain.Popedom;
 import com.github.app.api.handler.UriHandler;
 import com.github.app.api.services.AccountService;
 import com.github.app.api.services.LogService;
 import com.github.app.api.services.RolePodomService;
+import com.github.app.api.utils.AppServerConfigLoader;
 import com.github.app.api.utils.AuthUtils;
-import com.github.app.api.utils.ConfigLoader;
 import com.github.app.api.utils.PopedomContext;
 import com.github.app.api.utils.SessionConstant;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
-
+import com.github.app.utils.ServerEnvConstant;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.auth.KeyStoreOptions;
 import io.vertx.ext.auth.User;
@@ -24,15 +19,17 @@ import io.vertx.ext.auth.jwt.JWTAuth;
 import io.vertx.ext.auth.jwt.JWTAuthOptions;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 @Component
 public class AuthInterceptor implements UriHandler {
-    private Logger logger = LogManager.getLogger(AuthInterceptor.class);
     private static JWTAuthOptions jwtAuthOptions;
 
     static {
-        JsonObject sysConfig = ConfigLoader.getServerCfg().getJsonObject("jwt.keystore");
-        jwtAuthOptions = new JWTAuthOptions().setKeyStore(new KeyStoreOptions().setPath(sysConfig.getString("path")).setPassword(sysConfig.getString("password")));
+        AppServerConfig sysConfig = AppServerConfigLoader.getServerCfg();
+        jwtAuthOptions = new JWTAuthOptions().setKeyStore(new KeyStoreOptions().setPath(ServerEnvConstant.getAppServerCfgFilePath(sysConfig.getJwtCertificateFilePath())).setPassword(sysConfig.getJwtCertificatePassword()));
     }
 
     private JWTAuth jwtAuth;

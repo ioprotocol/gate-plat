@@ -1,5 +1,6 @@
 package com.github.app.api.services.impl;
 
+import com.github.app.api.config.AppServerConfig;
 import com.github.app.api.services.SystemOperationService;
 import com.github.app.utils.MD5Utils;
 import com.github.app.utils.ServerEnvConstant;
@@ -22,11 +23,9 @@ public class MySqlOperationServiceImpl implements SystemOperationService {
     private Logger logger = LogManager.getLogger(MySqlOperationServiceImpl.class);
 
     @Override
-    public void install(JsonObject jsonObject) {
+    public void install(AppServerConfig serverConfig) {
         logger.info("begin import mysql data");
-        JsonObject datasource = jsonObject.getJsonObject("datasource");
-
-        String url = datasource.getString("url");
+        String url = serverConfig.getDataSourceUrl();
 
         String host = parseHost(url);
         String port = parsePort(url);
@@ -39,19 +38,17 @@ public class MySqlOperationServiceImpl implements SystemOperationService {
         CommandLine commandLine = new CommandLine("mysql");
         commandLine.addArgument("--host=" + host);
         commandLine.addArgument("-P" + port);
-        commandLine.addArgument("-u" + datasource.getString("username"));
-        commandLine.addArgument("-p" + datasource.getString("password"));
+        commandLine.addArgument("-u" + serverConfig.getDataSourceUserName());
+        commandLine.addArgument("-p" + serverConfig.getDataSourcePassword());
 
         exeMysqlImport(sqlFile, commandLine);
     }
 
 
     @Override
-    public void backup(JsonObject jsonObject) {
+    public void backup(AppServerConfig serverConfig) {
         logger.info("begin export mysql data");
-        JsonObject datasource = jsonObject.getJsonObject("datasource");
-
-        String url = datasource.getString("url");
+        String url = serverConfig.getDataSourceUrl();
         String host = parseHost(url);
         String port = parsePort(url);
         String databaseName = parseDatabaseName(url);
@@ -65,8 +62,8 @@ public class MySqlOperationServiceImpl implements SystemOperationService {
         CommandLine commandLine = new CommandLine("mysqldump");
         commandLine.addArgument("--host=" + host, false);
         commandLine.addArgument("-P" + port);
-        commandLine.addArgument("-u" + datasource.getString("username"));
-        commandLine.addArgument("-p" + datasource.getString("password"));
+        commandLine.addArgument("-u" + serverConfig.getDataSourceUserName());
+        commandLine.addArgument("-p" + serverConfig.getDataSourcePassword());
         commandLine.addArgument(databaseName, false);
 
         Executor executor = new DefaultExecutor();
@@ -92,11 +89,9 @@ public class MySqlOperationServiceImpl implements SystemOperationService {
     }
 
     @Override
-    public void restore(JsonObject jsonObject, String fileName) {
+    public void restore(AppServerConfig serverConfig, String fileName) {
         logger.info("begin import mysql data");
-        JsonObject datasource = jsonObject.getJsonObject("datasource");
-
-        String url = datasource.getString("url");
+        String url = serverConfig.getDataSourceUrl();
 
         String host = parseHost(url);
         String port = parsePort(url);
@@ -110,8 +105,8 @@ public class MySqlOperationServiceImpl implements SystemOperationService {
         CommandLine commandLine = new CommandLine("mysql");
         commandLine.addArgument("--host=" + host);
         commandLine.addArgument("-P" + port);
-        commandLine.addArgument("-u" + datasource.getString("username"));
-        commandLine.addArgument("-p" + datasource.getString("password"));
+        commandLine.addArgument("-u" + serverConfig.getDataSourceUserName());
+        commandLine.addArgument("-p" + serverConfig.getDataSourcePassword());
         commandLine.addArgument("-D" + databaseName);
 
         exeMysqlImport(sqlFileName, commandLine);

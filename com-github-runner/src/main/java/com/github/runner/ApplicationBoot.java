@@ -1,7 +1,8 @@
 package com.github.runner;
 
+import com.github.app.api.config.AppServerConfig;
 import com.github.app.api.services.impl.MySqlOperationServiceImpl;
-import com.github.app.api.utils.ConfigLoader;
+import com.github.app.api.utils.AppServerConfigLoader;
 import com.github.app.api.verticles.HttpServerVerticle;
 import com.github.app.utils.JacksonUtils;
 import com.github.app.utils.ServerEnvConstant;
@@ -70,20 +71,20 @@ public class ApplicationBoot {
                     case RESTORE: {
                         String file = commandLine.get()
                                 .getRawValueForOption(commandLine.get().cli().getOption("file"));
-                        new MySqlOperationServiceImpl().restore(ConfigLoader.getServerCfg(), file);
+                        new MySqlOperationServiceImpl().restore(AppServerConfigLoader.getServerCfg(), file);
                         break;
                     }
                     case INSTALL: {
-                        new MySqlOperationServiceImpl().install(ConfigLoader.getServerCfg());
+                        new MySqlOperationServiceImpl().install(AppServerConfigLoader.getServerCfg());
                         break;
                     }
                     case BACKUP: {
-                        new MySqlOperationServiceImpl().backup(ConfigLoader.getServerCfg());
+                        new MySqlOperationServiceImpl().backup(AppServerConfigLoader.getServerCfg());
                         break;
                     }
                     case SERVER: {
                         DeploymentOptions deploymentOptions = new DeploymentOptions();
-                        deploymentOptions.setConfig(ConfigLoader.getServerCfg());
+                        deploymentOptions.setConfig(JsonObject.mapFrom(AppServerConfigLoader.getServerCfg()));
                         Vertx vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(new DropwizardMetricsOptions().setJmxEnabled(true)));
                         vertx.deployVerticle(HttpServerVerticle.class, deploymentOptions, ar -> {
                             if (ar.succeeded()) {
@@ -124,8 +125,8 @@ public class ApplicationBoot {
         /**
          * set vertx cache base directory
          */
-        JsonObject config = ConfigLoader.getServerCfg();
-        String cacheBase = config.getJsonObject("vertx").getString("cacheDirBase");
+        AppServerConfig config  = AppServerConfigLoader.getServerCfg();
+        String cacheBase = config.getVertxCacheDir();
         System.setProperty("vertx.cacheDirBase", cacheBase);
     }
 

@@ -1,7 +1,10 @@
 package com.github.app.api.handler.open;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 
+import com.github.app.api.config.AppServerConfig;
+import com.github.app.utils.ServerEnvConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
@@ -100,11 +103,14 @@ public class JWTIssueHandler implements UriHandler {
         routingContext.session().remove(CAPTCHA_CODE);
 
         if (config == null) {
-            JsonObject sysConfig = routingContext.vertx().getOrCreateContext().config().getJsonObject("jwt.keystore");
+            AppServerConfig sysConfig = routingContext.vertx().getOrCreateContext().config().mapTo(AppServerConfig.class);
+
+            String path = ServerEnvConstant.getAppServerCfgFilePath(sysConfig.getJwtCertificateFilePath());
+            logger.info("path:" + path);
             config = new JWTAuthOptions()
                     .setKeyStore(new KeyStoreOptions()
-                            .setPath(sysConfig.getString("path"))
-                            .setPassword(sysConfig.getString("password")));
+                            .setPath(path)
+                            .setPassword(sysConfig.getJwtCertificatePassword()));
         }
 
         Account acc = accountService.authLogin(account, password);
