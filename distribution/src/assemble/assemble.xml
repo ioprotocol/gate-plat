@@ -22,6 +22,9 @@
             <directory>${basedir}/../data</directory>
         </fileSet>
         <fileSet>
+            <directory>${basedir}/../web</directory>
+        </fileSet>
+        <fileSet>
             <directory>${basedir}/../docs</directory>
         </fileSet>
         <fileSet>

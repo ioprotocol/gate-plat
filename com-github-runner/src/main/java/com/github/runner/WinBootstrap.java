@@ -1,7 +1,7 @@
 package com.github.runner;
 
-import com.github.app.api.utils.AppServerConfigLoader;
-import com.github.app.api.verticles.HttpServerVerticle;
+import com.github.app.server.HttpServerVerticle;
+import com.github.app.spi.utils.AppServerConfigLoader;
 import com.github.app.utils.ServerEnvConstant;
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;

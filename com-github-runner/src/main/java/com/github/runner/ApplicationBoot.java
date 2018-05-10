@@ -1,9 +1,9 @@
 package com.github.runner;
 
-import com.github.app.api.config.AppServerConfig;
-import com.github.app.api.services.impl.MySqlOperationServiceImpl;
-import com.github.app.api.utils.AppServerConfigLoader;
-import com.github.app.api.verticles.HttpServerVerticle;
+import com.github.app.server.HttpServerVerticle;
+import com.github.app.spi.config.AppServerConfig;
+import com.github.app.spi.services.impl.MySqlOperationServiceImpl;
+import com.github.app.spi.utils.AppServerConfigLoader;
 import com.github.app.utils.JacksonUtils;
 import com.github.app.utils.ServerEnvConstant;
 import io.vertx.core.DeploymentOptions;

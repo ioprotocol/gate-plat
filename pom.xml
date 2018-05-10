@@ -18,6 +18,8 @@
         <module>com-github-gate-server</module>
         <module>com-github-gate-ruler</module>
         <module>distribution</module>
+        <module>com-github-app-spi</module>
+        <module>com-github-app-server</module>
     </modules>
 
     <properties>

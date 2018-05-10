@@ -15,8 +15,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.github.app.api</groupId>
-            <artifactId>com-github-app-api</artifactId>
+            <groupId>com.github.app.server</groupId>
+            <artifactId>com-github-app-server</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
