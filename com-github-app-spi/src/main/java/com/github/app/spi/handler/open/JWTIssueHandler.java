@@ -5,6 +5,7 @@ import com.github.app.spi.dao.domain.Account;
 import com.github.app.spi.handler.OpenUriHandler;
 import com.github.app.spi.services.AccountService;
 import com.github.app.spi.services.LogService;
+import com.github.app.spi.utils.AppServerConfigLoader;
 import com.github.app.spi.utils.CaptchaFactory;
 import com.github.app.utils.ServerEnvConstant;
 import com.github.cage.Cage;
@@ -33,13 +34,20 @@ public class JWTIssueHandler implements OpenUriHandler {
     @Autowired
     private LogService logService;
 
-    private static final int CAPTCHA_LENGTH = 5;
-    private static final int CAPTCHA_TYPE = 1;
     private static final String CAPTCHA_CODE = "captchaCode";
 
-    private CaptchaFactory captchaFactory = new CaptchaFactory(CAPTCHA_TYPE, CAPTCHA_LENGTH);
+    private static final CaptchaFactory captchaFactory;
 
     private Cage cage = new GCage();
+
+    static {
+        AppServerConfig sysConfig = AppServerConfigLoader.getServerCfg();
+        if (sysConfig.isCaptchaEnabled()) {
+            captchaFactory = new CaptchaFactory(CaptchaFactory.CaptchaModel.valueOf(sysConfig.getCaptchaModel().toUpperCase()), sysConfig.getCaptchaLength());
+        } else {
+            captchaFactory = null;
+        }
+    }
 
     @Override
     public void registeUriHandler(Router router) {
@@ -77,9 +85,13 @@ public class JWTIssueHandler implements OpenUriHandler {
         String password = jsonObject.getString("password");
         String validateCode = jsonObject.getString("validateCode");
 
-        if (StringUtils.isEmpty(validateCode)) {
-            responseOperationFailed(routingContext, "验证码必须填写");
-            return;
+        AppServerConfig sysConfig = AppServerConfigLoader.getServerCfg();
+
+        if (sysConfig.isCaptchaEnabled()) {
+            if (StringUtils.isEmpty(validateCode)) {
+                responseOperationFailed(routingContext, "验证码必须填写");
+                return;
+            }
         }
 
         if (StringUtils.isEmpty(account)) {
@@ -92,18 +104,17 @@ public class JWTIssueHandler implements OpenUriHandler {
             return;
         }
 
-        if (!validateCode.equalsIgnoreCase(routingContext.session().get(CAPTCHA_CODE))) {
-            responseOperationFailed(routingContext, "验证码输入有误");
-            return;
+        if (sysConfig.isCaptchaEnabled()) {
+            if (!validateCode.equalsIgnoreCase(routingContext.session().get(CAPTCHA_CODE))) {
+                responseOperationFailed(routingContext, "验证码输入有误");
+                return;
+            }
+
+            routingContext.session().remove(CAPTCHA_CODE);
         }
 
-        routingContext.session().remove(CAPTCHA_CODE);
-
         if (config == null) {
-            AppServerConfig sysConfig = routingContext.vertx().getOrCreateContext().config().mapTo(AppServerConfig.class);
-
             String path = ServerEnvConstant.getAppServerCfgFilePath(sysConfig.getJwtCertificateFilePath());
-            logger.info("path:" + path);
             config = new JWTAuthOptions()
                     .setKeyStore(new KeyStoreOptions()
                             .setPath(path)
@@ -114,7 +125,7 @@ public class JWTIssueHandler implements OpenUriHandler {
         if (!ObjectUtils.isEmpty(acc)) {
             JWTAuth provider = JWTAuth.create(routingContext.vertx(), config);
             String token = provider.generateToken(new JsonObject().put("account", account),
-                    new JWTOptions().setExpiresInMinutes(60 * 3));
+                    new JWTOptions().setExpiresInMinutes(sysConfig.getJwtTokenExpiresInMinutes()));
             logService.addLog(account, "登录成功", "[Y]-->token:" + token + "");
             responseSuccess(routingContext, "", token);
         } else {

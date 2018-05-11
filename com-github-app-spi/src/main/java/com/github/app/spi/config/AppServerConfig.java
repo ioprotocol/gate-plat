@@ -2,25 +2,46 @@ package com.github.app.spi.config;
 
 public class AppServerConfig {
     private int apiPort = 8080;
-    /** TLS **/
+    /**
+     * TLS
+     **/
     private boolean tlsEnabled = false;
     private String tlsCertificateFilePath;
     private String tlsCertificatePassword;
-    /** jwt token **/
+    /**
+     * jwt token
+     **/
     private String jwtCertificateFilePath;
     private String jwtCertificatePassword;
-    /** datasource **/
+    /**
+     * datasource
+     **/
     private boolean dataSourceAutoInit = false;
     private String dataSourceDriverClassName;
     private String dataSourceUrl;
     private String dataSourceUserName;
     private String dataSourcePassword;
-    /** vertx cache directory **/
+    /**
+     * vertx cache directory
+     **/
     private String vertxCacheDir;
 
-    /** slow sql performance monitor **/
+    /**
+     * slow sql performance monitor
+     **/
     private boolean slowSqlMonitorEnabled = true;
     private long slowSqlTimeInMs = 3000;
+    /**
+     * jwt token expires time in minutes
+     */
+    private int jwtTokenExpiresInMinutes = 3 * 60;
+
+    /**
+     * captcha configuration
+     */
+    private boolean captchaEnabled = true;
+    private int captchaLength = 5;
+    private String captchaModel = "letter";
 
     public int getApiPort() {
         return apiPort;
@@ -134,23 +155,35 @@ public class AppServerConfig {
         this.dataSourceAutoInit = dataSourceAutoInit;
     }
 
-    @Override
-    public String toString() {
-        return "AppServerConfig{" +
-                "apiPort=" + apiPort +
-                ", tlsEnabled=" + tlsEnabled +
-                ", tlsCertificateFilePath='" + tlsCertificateFilePath + '\'' +
-                ", tlsCertificatePassword='" + tlsCertificatePassword + '\'' +
-                ", jwtCertificateFilePath='" + jwtCertificateFilePath + '\'' +
-                ", jwtCertificatePassword='" + jwtCertificatePassword + '\'' +
-                ", dataSourceAutoInit=" + dataSourceAutoInit +
-                ", dataSourceDriverClassName='" + dataSourceDriverClassName + '\'' +
-                ", dataSourceUrl='" + dataSourceUrl + '\'' +
-                ", dataSourceUserName='" + dataSourceUserName + '\'' +
-                ", dataSourcePassword='" + dataSourcePassword + '\'' +
-                ", vertxCacheDir='" + vertxCacheDir + '\'' +
-                ", slowSqlMonitorEnabled=" + slowSqlMonitorEnabled +
-                ", slowSqlTimeInMs=" + slowSqlTimeInMs +
-                '}';
+    public int getJwtTokenExpiresInMinutes() {
+        return jwtTokenExpiresInMinutes;
+    }
+
+    public void setJwtTokenExpiresInMinutes(int jwtTokenExpiresInMinutes) {
+        this.jwtTokenExpiresInMinutes = jwtTokenExpiresInMinutes;
+    }
+
+    public boolean isCaptchaEnabled() {
+        return captchaEnabled;
+    }
+
+    public void setCaptchaEnabled(boolean captchaEnabled) {
+        this.captchaEnabled = captchaEnabled;
+    }
+
+    public int getCaptchaLength() {
+        return captchaLength;
+    }
+
+    public void setCaptchaLength(int captchaLength) {
+        this.captchaLength = captchaLength;
+    }
+
+    public String getCaptchaModel() {
+        return captchaModel;
+    }
+
+    public void setCaptchaModel(String captchaModel) {
+        this.captchaModel = captchaModel;
     }
 }
