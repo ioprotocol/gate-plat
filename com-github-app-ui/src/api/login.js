@@ -7,6 +7,12 @@ export function login(params) {
     data: params
   })
 }
+export function getCaptchaInfo() {
+  return request({
+    url: '/open/captcha',
+    method: 'get'
+  })
+}
 
 export function getInfo() {
   return request({

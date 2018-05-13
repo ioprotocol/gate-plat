@@ -42,17 +42,23 @@ public class JWTIssueHandler implements OpenUriHandler {
 
     static {
         AppServerConfig sysConfig = AppServerConfigLoader.getServerCfg();
-        if (sysConfig.isCaptchaEnabled()) {
-            captchaFactory = new CaptchaFactory(CaptchaFactory.CaptchaModel.valueOf(sysConfig.getCaptchaModel().toUpperCase()), sysConfig.getCaptchaLength());
-        } else {
-            captchaFactory = null;
-        }
+        captchaFactory = new CaptchaFactory(CaptchaFactory.CaptchaModel.valueOf(sysConfig.getCaptchaModel().toUpperCase()), sysConfig.getCaptchaLength());
     }
 
     @Override
     public void registeUriHandler(Router router) {
         router.post().path("/auth").produces(CONTENT_TYPE).blockingHandler(this::issueJWTToken, false);
         router.get().path("/auth").blockingHandler(this::captchaCode, false);
+        router.get().path("/captcha").blockingHandler(this::getCaptchaInfo, false);
+    }
+
+    public void getCaptchaInfo(RoutingContext routingContext) {
+        AppServerConfig sysConfig = AppServerConfigLoader.getServerCfg();
+        JsonObject captchaInfo = new JsonObject();
+        captchaInfo.put("captchaEnabled", sysConfig.isCaptchaEnabled());
+        captchaInfo.put("captchaModel", sysConfig.getCaptchaModel());
+        captchaInfo.put("captchaLength", sysConfig.getCaptchaLength());
+        responseSuccess(routingContext, captchaInfo);
     }
 
     public void captchaCode(RoutingContext routingContext) {

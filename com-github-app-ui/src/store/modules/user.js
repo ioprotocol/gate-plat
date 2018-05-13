@@ -1,5 +1,5 @@
-import { login, logout, getInfo } from '@/api/login'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { login, logout, getInfo, getCaptchaInfo } from '@/api/login'
+import { getToken, setToken, removeToken, getCaptchaModel, setCaptchaModel, getCaptchaLength, setCaptchaLength } from '@/utils/auth'
 
 const user = {
   state: {
@@ -7,7 +7,9 @@ const user = {
     name: '',
     avatar: '',
     codes: [],
-    roles: []
+    roles: [],
+    captchaModel: getCaptchaModel(),
+    captchaLength: getCaptchaLength()
   },
 
   mutations: {
@@ -25,6 +27,12 @@ const user = {
     },
     SET_CODES: (state, codes) => {
       state.codes = codes
+    },
+    SET_CAPTCHA_MODEL: (state, model) => {
+      state.captchaModel = model
+    },
+    SET_CAPTCHA_LENGTH: (state, length) => {
+      state.captchaLength = length
     }
   },
 
@@ -44,12 +52,34 @@ const user = {
       })
     },
 
+    // 拉取登陆界面验证码的配置信息
+    GetCaptchaInfo({ commit, state }) {
+      return new Promise((resolve, reject) => {
+        getCaptchaInfo(state.token).then(response => {
+          const data = response.data
+          if (data.captchaEnabled === true) {
+            setCaptchaModel(data.captchaModel)
+            setCaptchaLength(data.captchaLength)
+            commit('SET_CAPTCHA_MODEL', data.captchaModel)
+            commit('SET_CAPTCHA_LENGTH', data.captchaLength)
+          } else {
+            setCaptchaModel('')
+            setCaptchaLength(0)
+            commit('SET_CAPTCHA_MODEL', '')
+            commit('SET_CAPTCHA_LENGTH', 0)
+          }
+          resolve(response)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+
     // 获取用户信息
     GetInfo({ commit, state }) {
       return new Promise((resolve, reject) => {
         getInfo(state.token).then(response => {
           const data = response.data
-          console.log(response.data)
           commit('SET_ROLES', data.account.role.name)
           commit('SET_NAME', data.account.name)
           commit('SET_AVATAR', process.env.BASE_API + '/open/avatar?imgName=' + data.account.photoUrl + '&height=80&width=80')

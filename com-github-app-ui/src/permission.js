@@ -18,7 +18,11 @@ router.beforeEach((to, from, next) => {
         }).catch(() => {
           store.dispatch('FedLogOut').then(() => {
             Message.error('验证失败,请重新登录')
-            next({ path: '/login' })
+            store.dispatch('GetCaptchaInfo').then(res => {
+              next({ path: '/login' })
+            }).catch(() => {
+              Message.error('获取配置信息失败')
+            })
           })
         })
       } else {
@@ -26,12 +30,16 @@ router.beforeEach((to, from, next) => {
       }
     }
   } else {
-    if (whiteList.indexOf(to.path) !== -1) {
-      next()
-    } else {
-      next('/login')
-      NProgress.done()
-    }
+    store.dispatch('GetCaptchaInfo').then(res => {
+      if (whiteList.indexOf(to.path) !== -1) {
+        next()
+      } else {
+        next('/login')
+        NProgress.done()
+      }
+    }).catch(() => {
+      Message.error('获取配置信息失败')
+    })
   }
 })
 

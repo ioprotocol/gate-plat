@@ -19,7 +19,7 @@
         <span class="show-pwd" @click="showPwd"><svg-icon icon-class="eye" /></span>
       </el-form-item>
 
-      <el-row :gutter="5">
+      <el-row :gutter="5" v-show="isCaptchaShow">
         <el-col :span="8">
           <img :src="captchaUrl" style="width:100%;height:100%;border-radius:4px;margin-top: 5px;" @click="refreshCaptcha">
         </el-col>
@@ -37,10 +37,20 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { isvalidUsername } from '@/utils/validate'
 
 export default {
   name: 'login',
+  computed: {
+    ...mapGetters([
+      'captchaModel',
+      'captchaLength'
+    ]),
+    isCaptchaShow() {
+      return this.captchaLength !== 0
+    }
+  },
   data() {
     const validateAccount = (rule, value, callback) => {
       if (!isvalidUsername(value)) {
@@ -57,22 +67,25 @@ export default {
       }
     }
     const validateCode = (rule, value, callback) => {
+      if (this.captchaLength === 0) {
+        callback()
+      }
       if (value.length !== this.captchaLength) {
         callback(new Error('验证码长度必须是' + this.captchaLength + '位'))
       } else {
-        if (this.captchaType === 0) {
+        if (this.captchaModel === 'number') {
           if (/^[0-9]+$/.test(this.loginForm.validateCode)) {
             callback()
           } else {
             callback(new Error('验证码必须全部为数字'))
           }
-        } else if (this.captchaType === 1) {
+        } else if (this.captchaModel === 'letter') {
           if (/^[a-z]+$/.test(this.loginForm.validateCode)) {
             callback()
           } else {
             callback(new Error('验证码必须全部为字母'))
           }
-        } else if (this.captchaType === 2) {
+        } else if (this.captchaModel === 'varchar') {
           if (/^[a-z0-9]+$/.test(this.loginForm.validateCode)) {
             callback()
           } else {
@@ -83,8 +96,6 @@ export default {
     }
     return {
       captchaUrl: '',
-      captchaLength: 5,
-      captchaType: 1,
       loginForm: {
         account: '',
         password: '',
