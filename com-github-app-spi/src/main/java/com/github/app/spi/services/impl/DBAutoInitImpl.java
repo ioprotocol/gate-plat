@@ -1,11 +1,14 @@
 package com.github.app.spi.services.impl;
 
+import com.github.app.spi.config.AppServerConfig;
 import com.github.app.spi.dao.domain.Popedom;
 import com.github.app.spi.dao.domain.RolePopedom;
 import com.github.app.spi.handler.UriHandler;
 import com.github.app.spi.services.DBAutoInit;
 import com.github.app.spi.services.RolePodomService;
+import com.github.app.spi.services.SystemOperationService;
 import com.github.app.spi.utils.AppContext;
+import com.github.app.spi.utils.AppServerConfigLoader;
 import com.github.app.utils.ServerEnvConstant;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
@@ -28,17 +31,37 @@ public class DBAutoInitImpl implements DBAutoInit {
     private DataSource dataSource;
     @Autowired
     private RolePodomService rolePodomService;
+    @Autowired
+    private SystemOperationService systemOperationService;
 
     @Override
     public void init() throws IOException {
+        AppServerConfig sysConfig = AppServerConfigLoader.getServerCfg();
+
+        systemOperationService.createDatabase(sysConfig);
+
         JdbcTemplate jdbcTemplate = new JdbcTemplate();
         jdbcTemplate.setDataSource(dataSource);
 
+        String prefix = "mysql:";
+        if (sysConfig.getDataSourceDriverClassName().contains("mysql")) {
+            prefix = "mysql:";
+        } else {
+            prefix = "h2:";
+        }
+
         List<String> sqlLines = FileUtils.readLines(new File(ServerEnvConstant.getAppServerDBInitSQLFilePath()));
-        // create base tables
+
+        /** 创建表结构 **/
         for (String sql : sqlLines) {
             logger.info(sql);
-            jdbcTemplate.execute(sql);
+            if (sql.startsWith("mysql:") || sql.startsWith("h2:")) {
+                if (sql.startsWith(prefix)) {
+                    jdbcTemplate.execute(sql.substring(prefix.length()));
+                }
+            } else {
+                jdbcTemplate.execute(sql);
+            }
         }
 
         /** 生成菜单元数据 **/
@@ -51,8 +74,8 @@ public class DBAutoInitImpl implements DBAutoInit {
         }
         rolePodomService.savePopedom(popedoms);
 
-        popedoms = rolePodomService.findAllPopedom();
         /** 授予超级管理员全部的资源访问权限 **/
+        popedoms = rolePodomService.findAllPopedom();
         List<RolePopedom> rolePopedoms = new ArrayList<>();
         for (Popedom popedom : popedoms) {
             RolePopedom rolePopedom = new RolePopedom();
@@ -61,5 +84,10 @@ public class DBAutoInitImpl implements DBAutoInit {
             rolePopedoms.add(rolePopedom);
         }
         rolePodomService.addRolePopedoms(rolePopedoms);
+
+        /** 自动关闭配置文件中的captchaEnabled为false **/
+        String configFileContent = FileUtils.readFileToString(new File(ServerEnvConstant.getAppServerCfgFilePath()));
+        configFileContent = configFileContent.replace("dataSourceAutoInit=true", "dataSourceAutoInit=false");
+        FileUtils.write(new File(ServerEnvConstant.getAppServerCfgFilePath()), configFileContent);
     }
 }

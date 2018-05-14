@@ -2,7 +2,7 @@ package com.github.runner;
 
 import com.github.app.server.HttpServerVerticle;
 import com.github.app.spi.config.AppServerConfig;
-import com.github.app.spi.services.impl.MySqlOperationServiceImpl;
+import com.github.app.spi.services.impl.SystemOperationServiceImpl;
 import com.github.app.spi.utils.AppServerConfigLoader;
 import com.github.app.utils.JacksonUtils;
 import com.github.app.utils.ServerEnvConstant;
@@ -71,15 +71,11 @@ public class ApplicationBoot {
                     case RESTORE: {
                         String file = commandLine.get()
                                 .getRawValueForOption(commandLine.get().cli().getOption("file"));
-                        new MySqlOperationServiceImpl().restore(AppServerConfigLoader.getServerCfg(), file);
-                        break;
-                    }
-                    case INSTALL: {
-                        new MySqlOperationServiceImpl().install(AppServerConfigLoader.getServerCfg());
+                        new SystemOperationServiceImpl().restore(AppServerConfigLoader.getServerCfg(), file);
                         break;
                     }
                     case BACKUP: {
-                        new MySqlOperationServiceImpl().backup(AppServerConfigLoader.getServerCfg());
+                        new SystemOperationServiceImpl().backup(AppServerConfigLoader.getServerCfg());
                         break;
                     }
                     case SERVER: {

@@ -21,11 +21,13 @@ import java.util.Comparator;
 import java.util.LinkedList;
 
 @Component
-public class MySqlOperationServiceImpl implements SystemOperationService {
-    private Logger logger = LogManager.getLogger(MySqlOperationServiceImpl.class);
+public class SystemOperationServiceImpl implements SystemOperationService {
+    private Logger logger = LogManager.getLogger(SystemOperationServiceImpl.class);
 
     @Override
-    public void install(AppServerConfig serverConfig) {
+    public void createDatabase(AppServerConfig serverConfig) {
+        if(!serverConfig.getDataSourceDriverClassName().contains("mysql"))
+            return;
         logger.info("begin import mysql data");
         String url = serverConfig.getDataSourceUrl();
 
@@ -33,22 +35,21 @@ public class MySqlOperationServiceImpl implements SystemOperationService {
         String port = parsePort(url);
         String databaseName = parseDatabaseName(url);
 
-        String sqlFile = ServerEnvConstant.getAppServerHome()
-                + File.separator + "data"
-                + File.separator + databaseName + ".sql";
-
         CommandLine commandLine = new CommandLine("mysql");
         commandLine.addArgument("--host=" + host);
         commandLine.addArgument("-P" + port);
         commandLine.addArgument("-u" + serverConfig.getDataSourceUserName());
         commandLine.addArgument("-p" + serverConfig.getDataSourcePassword());
 
-        exeMysqlImport(sqlFile, commandLine);
+        String sql = "drop database if exists " + databaseName + "; CREATE DATABASE IF NOT EXISTS " + databaseName +" DEFAULT CHARSET utf8 COLLATE utf8_general_ci;";
+        InputStream inputStream = new ByteArrayInputStream(sql.getBytes());
+        exeMysqlImport(inputStream, commandLine);
     }
-
 
     @Override
     public void backup(AppServerConfig serverConfig) {
+        if(!serverConfig.getDataSourceDriverClassName().contains("mysql"))
+            return;
         logger.info("begin export mysql data");
         String url = serverConfig.getDataSourceUrl();
         String host = parseHost(url);
@@ -92,6 +93,8 @@ public class MySqlOperationServiceImpl implements SystemOperationService {
 
     @Override
     public void restore(AppServerConfig serverConfig, String fileName) {
+        if(!serverConfig.getDataSourceDriverClassName().contains("mysql"))
+            return;
         logger.info("begin import mysql data");
         String url = serverConfig.getDataSourceUrl();
 
@@ -161,6 +164,16 @@ public class MySqlOperationServiceImpl implements SystemOperationService {
      * @param commandLine
      */
     private void exeMysqlImport(String fileName, CommandLine commandLine) {
+        try {
+            exeMysqlImport(new FileInputStream(fileName), commandLine);
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error("import mysql data failed");
+            logger.error(e.getLocalizedMessage());
+        }
+    }
+
+    private void exeMysqlImport(InputStream inputStream, CommandLine commandLine) {
         Executor executor = new DefaultExecutor();
         executor.setExitValue(0);
 
@@ -168,8 +181,7 @@ public class MySqlOperationServiceImpl implements SystemOperationService {
         executor.setWatchdog(watchdog);
         ByteArrayOutputStream errorStream = new ByteArrayOutputStream();
         try {
-            InputStream sqlFileStream = new FileInputStream(fileName);
-            executor.setStreamHandler(new PumpStreamHandler(null, errorStream, sqlFileStream));
+            executor.setStreamHandler(new PumpStreamHandler(null, errorStream, inputStream));
 
             logger.info(commandLine.toString());
             int exitValue = executor.execute(commandLine);

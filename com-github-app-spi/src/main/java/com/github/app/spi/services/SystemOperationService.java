@@ -4,7 +4,7 @@ import com.github.app.spi.config.AppServerConfig;
 import io.vertx.core.json.JsonObject;
 
 public interface SystemOperationService {
-    void install(AppServerConfig serverConfig);
+    void createDatabase(AppServerConfig serverConfig);
 
     void backup(AppServerConfig serverConfig);
 
