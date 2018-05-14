@@ -8,7 +8,7 @@
         <el-button type="primary" @click="uploadSqlFile" size="mini">上传</el-button>
       </el-col>
       <el-col :span="1">
-        <el-button type="primary" @click="sysPopedomRepaire" size="mini">资源修复</el-button>
+        <el-button type="warning" @click="sysPopedomRepaire" size="mini">资源修复</el-button>
       </el-col>
     </el-row>
 
@@ -49,10 +49,7 @@
 </template>
 
 <script>
-  import { getSqlFileList } from '@/api/sysdatabackup'
-  import { backupDatabase } from '@/api/sysdatabackup'
-  import { restoreDatabase } from '@/api/sysdatabackup'
-  import { deleteSqlFile, popedomrepaire } from '@/api/sysdatabackup'
+  import { deleteSqlFile, popedomrepaire, restoreDatabase, backupDatabase, getSqlFileList } from '@/api/sysdatabackup'
   import { formatMs2String } from '@/utils/timeutils'
   import BasePagination from '../base/BasePagination'
   import BaseUploadFile from '../base/BaseUploadFile'
@@ -114,13 +111,19 @@
         })
       },
       sysPopedomRepaire() {
-        this.listLoading = true
-        popedomrepaire().then(rep => {
-          this.listLoading = false
-          Message({
-            message: '系统资源修复成功',
-            type: 'success',
-            duration: 3 * 1000
+        MessageBox.confirm('确认要对系统资源进行修复？', '提示', {
+          confirmButtonText: '继续',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.listLoading = true
+          popedomrepaire().then(rep => {
+            this.listLoading = false
+            Message({
+              message: '系统资源修复成功',
+              type: 'success',
+              duration: 3 * 1000
+            })
           })
         })
       },
