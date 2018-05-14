@@ -7,6 +7,7 @@ import com.github.app.spi.dao.mapper.RolePopedomMapper;
 import com.github.app.spi.services.RolePodomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import java.util.List;
@@ -58,6 +59,7 @@ public class RolePodomServiceImpl implements RolePodomService {
 		return roleMapper.selectByExample(new RoleExample());
 	}
 
+	@Transactional
 	@Override
 	public void addRolePopedoms(List<RolePopedom> rolePopedomList) {
 		deleteRolePopedomById(rolePopedomList.get(0).getRoleId(), null);

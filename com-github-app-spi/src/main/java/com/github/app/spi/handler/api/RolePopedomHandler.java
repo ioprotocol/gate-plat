@@ -39,7 +39,7 @@ public class RolePopedomHandler implements AuthUriHandler {
         router.put().path("/role/popedom").produces(CONTENT_TYPE).blockingHandler(this::saveRolePopedom, false);
         router.get().path("/role/popedom/:roleId").produces(CONTENT_TYPE).blockingHandler(this::getRolePopedom, false);
         router.get().path("/role/popedom/vue/:roleId").produces(CONTENT_TYPE).blockingHandler(this::getRolePopedomVue, false);
-        router.get().path("/role/popedom/spi/:roleId").produces(CONTENT_TYPE).blockingHandler(this::getRolePopedomApi, false);
+        router.get().path("/role/popedom/api/:roleId").produces(CONTENT_TYPE).blockingHandler(this::getRolePopedomApi, false);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class RolePopedomHandler implements AuthUriHandler {
         list.add(new Popedom.Builder().name("权限修改").remark("管理员功能，分配每个系统角色的操作权限").code("/.+/role/popedom/" + HttpMethod.PUT.name()).build());
         list.add(new Popedom.Builder().name("角色权限查询").remark("管理员功能，查询每个角色拥有的操作权限集合").code("/.+/role/popedom/.+/" + HttpMethod.GET.name()).build());
         list.add(new Popedom.Builder().name("界面权限查询").remark("基本功能，查询角色拥有的前端界面集合(可见)").code("/.+/role/popedom/vue/.+/" + HttpMethod.GET.name()).build());
-        list.add(new Popedom.Builder().name("接口权限查询").remark("管理员功能，查询角色拥有的后台接口权限").code("/.+/role/popedom/spi/.+/" + HttpMethod.GET.name()).build());
+        list.add(new Popedom.Builder().name("接口权限查询").remark("管理员功能，查询角色拥有的后台接口权限").code("/.+/role/popedom/api/.+/" + HttpMethod.GET.name()).build());
     }
 
     public void saveOrUpdate(RoutingContext routingContext) {

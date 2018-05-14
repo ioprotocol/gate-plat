@@ -3,6 +3,7 @@ package com.github.app.spi.handler.api;
 import com.github.app.spi.config.AppServerConfig;
 import com.github.app.spi.dao.domain.Popedom;
 import com.github.app.spi.handler.AuthUriHandler;
+import com.github.app.spi.services.DBAutoInit;
 import com.github.app.spi.services.SystemOperationService;
 import com.github.app.spi.utils.AppServerConfigLoader;
 import com.github.app.spi.utils.RequestUtils;
@@ -27,6 +28,8 @@ public class SystemOperationHandler implements AuthUriHandler {
 
 	@Autowired
 	private SystemOperationService operationService;
+	@Autowired
+	private DBAutoInit dbAutoInit;
 
 	@Override
 	public void registeUriHandler(Router router) {
@@ -35,6 +38,7 @@ public class SystemOperationHandler implements AuthUriHandler {
 		router.put().path("/sysbackup").produces(CONTENT_TYPE).blockingHandler(this::backup, false);
 		router.delete().path("/sysbackup").produces(CONTENT_TYPE).blockingHandler(this::del, false);
 		router.put().path("/sysrestore").produces(CONTENT_TYPE).blockingHandler(this::restore, false);
+		router.put().path("/popedomrepaire").produces(CONTENT_TYPE).blockingHandler(this::popedomrepaire, false);
 	}
 
 	@Override
@@ -44,6 +48,7 @@ public class SystemOperationHandler implements AuthUriHandler {
 		list.add(new Popedom.Builder().name("系统备份").remark("执行一次服务器数据库备份").code("/.+/sysbackup/" + HttpMethod.PUT.name()).build());
 		list.add(new Popedom.Builder().name("删除备份").remark("删除系统中的某一个数据库备份文件").code("/.+/sysbackup/" + HttpMethod.DELETE.name()).build());
 		list.add(new Popedom.Builder().name("系统恢复").remark("恢复某一个备份文件到数据库中").code("/.+/sysrestore/" + HttpMethod.PUT.name()).build());
+		list.add(new Popedom.Builder().name("资源修复").remark("尝试自动修复系统资源").code("/.+/popedomrepaire/" + HttpMethod.GET.name()).build());
 	}
 
 	public void uploadFile(RoutingContext routingContext) {
@@ -102,6 +107,11 @@ public class SystemOperationHandler implements AuthUriHandler {
 
 		operationService.restore(config, list.get(0));
 		responseSuccess(routingContext);
+	}
+
+	public void popedomrepaire(RoutingContext routingContext) {
+	    dbAutoInit.popedomUpgrade();
+	    responseSuccess(routingContext);
 	}
 
 	public void download(RoutingContext routingContext) {

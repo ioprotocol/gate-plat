@@ -3,7 +3,6 @@ package com.github.app.spi.handler.interceptor;
 import com.github.app.spi.config.AppServerConfig;
 import com.github.app.spi.dao.domain.Account;
 import com.github.app.spi.dao.domain.Popedom;
-import com.github.app.spi.handler.OpenUriHandler;
 import com.github.app.spi.handler.UriHandler;
 import com.github.app.spi.services.AccountService;
 import com.github.app.spi.services.LogService;

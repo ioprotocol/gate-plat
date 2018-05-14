@@ -31,3 +31,9 @@ export function deleteSqlFile(name) {
     }
   })
 }
+export function popedomrepaire() {
+  return request({
+    url: '/api/popedomrepaire',
+    method: 'put'
+  })
+}

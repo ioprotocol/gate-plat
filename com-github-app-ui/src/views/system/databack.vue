@@ -7,6 +7,9 @@
       <el-col :span="1">
         <el-button type="primary" @click="uploadSqlFile" size="mini">上传</el-button>
       </el-col>
+      <el-col :span="1">
+        <el-button type="primary" @click="sysPopedomRepaire" size="mini">资源修复</el-button>
+      </el-col>
     </el-row>
 
     <el-table :data="list" v-loading.body="listLoading" element-loading-text="Loading" border fit highlight-current-row
@@ -49,7 +52,7 @@
   import { getSqlFileList } from '@/api/sysdatabackup'
   import { backupDatabase } from '@/api/sysdatabackup'
   import { restoreDatabase } from '@/api/sysdatabackup'
-  import { deleteSqlFile } from '@/api/sysdatabackup'
+  import { deleteSqlFile, popedomrepaire } from '@/api/sysdatabackup'
   import { formatMs2String } from '@/utils/timeutils'
   import BasePagination from '../base/BasePagination'
   import BaseUploadFile from '../base/BaseUploadFile'
@@ -107,6 +110,17 @@
               duration: 3 * 1000
             })
             this.fetchData()
+          })
+        })
+      },
+      sysPopedomRepaire() {
+        this.listLoading = true
+        popedomrepaire().then(rep => {
+          this.listLoading = false
+          Message({
+            message: '系统资源修复成功',
+            type: 'success',
+            duration: 3 * 1000
           })
         })
       },

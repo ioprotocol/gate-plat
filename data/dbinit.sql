@@ -6,7 +6,7 @@ mysql:drop index if exists idx_code_acc on log
 h2:drop index if exists idx_code_acc
 create index idx_code_acc  on log(code,op_account)
 drop table if exists popedom
-CREATE TABLE popedom ( popedom_id int(11) NOT NULL AUTO_INCREMENT, name varchar(60)  DEFAULT NULL, code varchar(50)  DEFAULT NULL, remark varchar(200) DEFAULT NULL, PRIMARY KEY (popedom_id), UNIQUE KEY idx_code (code))
+CREATE TABLE popedom ( popedom_id int(11) NOT NULL AUTO_INCREMENT, name varchar(90)  DEFAULT NULL, code varchar(50)  DEFAULT NULL, remark varchar(200) DEFAULT NULL, PRIMARY KEY (popedom_id), UNIQUE KEY idx_code (code))
 drop table if exists role
 CREATE TABLE role ( role_id int(11) unsigned NOT NULL AUTO_INCREMENT, name varchar(50)  DEFAULT NULL, PRIMARY KEY (role_id))
 drop table if exists role_popedom

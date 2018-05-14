@@ -23,7 +23,7 @@ public interface UriHandler {
     String CONTENT_TYPE = "application/json;charset=UTF-8";
 
     /**
-     * spi operation success
+     * api operation success
      */
     int CODE_SUCCESS = 0;
     /**
@@ -43,11 +43,11 @@ public interface UriHandler {
      */
     int CODE_USER_HAVE_LOGINED = -4;
     /**
-     * spi operation failed
+     * api operation failed
      */
     int CODE_API_OPERATION_FAILED = -5;
     /**
-     * spi operation authentication failed
+     * api operation authentication failed
      */
     int CODE_API_AUTHENTICATION_FAILED = -6;
 

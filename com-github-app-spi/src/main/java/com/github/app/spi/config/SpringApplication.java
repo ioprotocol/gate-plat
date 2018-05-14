@@ -21,11 +21,10 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import javax.sql.DataSource;
 
 @Configuration
-@ComponentScan("com.github.app.spi")
+@ComponentScan("com.github.app")
 @EnableTransactionManagement
-@MapperScan("com.github.app.spi.dao.mapper")
+@MapperScan({"com.github.app.spi.dao.mapper", "com.github.app.api.dao.mapper"})
 public class SpringApplication {
-
 
     @Bean(name = "dataSource")
     public DataSource dataSource() {
