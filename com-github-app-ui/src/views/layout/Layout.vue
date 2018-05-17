@@ -1,22 +1,27 @@
 <template>
-  <div class="app-wrapper" :class="{hideSidebar:!sidebar.opened}">
-    <sidebar class="sidebar-container"></sidebar>
-    <div class="main-container">
-      <navbar></navbar>
-      <app-main></app-main>
+  <div>
+    <div class="pg-header"><navbar/></div>
+    <div v-bind:class="{ 'pg-content': sidebar.opened, 'pg-content-collapse': !sidebar.opened }">
+      <div v-bind:class="{ 'menu': sidebar.opened, 'menu-collapse': !sidebar.opened}" class="left"><menu-test></menu-test></div>
+      <div v-bind:class="{'content': sidebar.opened, 'content-collapse': ! sidebar.opened}" class="content left">
+        <status-bar class="status-bar"></status-bar>
+        <app-main></app-main>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { Navbar, Sidebar, AppMain } from '@/views/layout/components'
+import { Navbar, Sidebar, AppMain, StatusBar, MenuTest } from '@/views/layout/components'
 
 export default {
   name: 'layout',
   components: {
     Navbar,
     Sidebar,
-    AppMain
+    AppMain,
+    StatusBar,
+    MenuTest
   },
   computed: {
     sidebar() {
@@ -26,12 +31,45 @@ export default {
 }
 </script>
 
-<style rel="stylesheet/scss" lang="scss" scoped>
-@import "src/styles/mixin.scss";
-.app-wrapper {
-  @include clearfix;
-  position: relative;
-  height: 100%;
-  width: 100%;
-}
+<style>
+  .left{
+    float: left;
+  }
+  .pg-header{
+    height: 64px;
+    background-color: #2459a2;
+    color: white;
+  }
+  .pg-content .menu {
+    position: absolute;
+    top:64px;
+    left: 0;
+    bottom: 0;
+    width: 200px;
+    background-color: #dddddd;
+  }
+  .content{
+    position: absolute;
+    top: 64px;
+    right: 0;
+    bottom: 0;
+    left: 200px;
+    overflow: hidden;
+  }
+  .pg-content-collapse .menu-collapse {
+    position: absolute;
+    top:64px;
+    left: 0;
+    bottom: 0;
+    width: 64px;
+    background-color: #dddddd;
+  }
+  .content-collapse {
+    position: absolute;
+    top: 64px;
+    right: 0;
+    bottom: 0;
+    left: 64px;
+    overflow: hidden;
+  }
 </style>

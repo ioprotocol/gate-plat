@@ -40,7 +40,7 @@ export default {
 <style rel="stylesheet/scss" lang="scss" scoped>
   .app-breadcrumb.el-breadcrumb {
     display: inline-block;
-    font-size: 14px;
+    font-size: 16px;
     line-height: 50px;
     margin-left: 10px;
     .no-redirect {
