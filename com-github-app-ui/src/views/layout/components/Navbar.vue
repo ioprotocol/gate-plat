@@ -1,27 +1,31 @@
 <template>
-  <el-row type="flex" justify="start" align="middle" class="navbg">
-    <el-col xs="12" sm="12" md="9" lg="8" xl="5">
+  <el-row type="flex" justify="end" align="middle" class="nav-bg">
+    <el-col :xs="12" :sm="10" :md="9" :lg="8" :xl="5">
       <div style="margin-left:20px;">
         <img :src="img_logo" style="float:left;display:block;width:125px;height:40px;margin-top:12px;"/><span class="title-font">{{$t("message.title")}}</span>
       </div>
     </el-col>
-    <el-col xs="12" sm="12" md="9" lg="8" xl="5">
-      <el-menu class="navbar navbg" mode="horizontal">
-        <el-dropdown class="avatar-container" trigger="click">
-          <div class="avatar-wrapper">
-            <img class="user-avatar" :src="avatar" style="border-radius:40px">
-            <i class="el-icon-caret-bottom"></i>
-          </div>
-          <el-dropdown-menu class="user-dropdown" slot="dropdown">
-            <router-link class="inlineBlock" to="/">
-              <el-dropdown-item>主页</el-dropdown-item>
-            </router-link>
-            <el-dropdown-item divided>
-              <span @click="logout" style="display:block;">退出</span>
-            </el-dropdown-item>
+    <el-col :xs="12" :sm="14" :md="15" :lg="16" :xl="19">
+      <el-row type="flex" justify="end" align="middle" ><el-col :span="24">
+        <el-dropdown :hide-on-click="false" style="float:right;">
+          <span><svg-icon icon-class="mine" font-size="20px"/></span>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item>黄金糕</el-dropdown-item>
+            <el-dropdown-item>狮子头</el-dropdown-item>
+            <el-dropdown-item>螺蛳粉</el-dropdown-item>
+            <el-dropdown-item disabled>双皮奶</el-dropdown-item>
+            <el-dropdown-item divided>蚵仔煎</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-      </el-menu>
+        <el-menu mode="horizontal" text-color="#FFF" background-color="#64a51a" active-text-color="#d1dbe5" class="nav-menu" @select="menuClick">
+          <el-menu-item index="1">首页</el-menu-item>
+          <el-menu-item index="2">基础配置</el-menu-item>
+          <el-menu-item index="3">数据接口</el-menu-item>
+          <el-menu-item index="4">平台监控</el-menu-item>
+          <el-menu-item index="5">统计分析</el-menu-item>
+          <el-menu-item index="6">终端运营</el-menu-item>
+        </el-menu>
+      </el-col></el-row>
     </el-col>
   </el-row>
 </template>
@@ -46,6 +50,9 @@ export default {
       this.$store.dispatch('LogOut').then(() => {
         location.reload() // 为了重新实例化vue-router对象 避免bug
       })
+    },
+    menuClick(index) {
+      console.log('open:' + index)
     }
   }
 }
@@ -61,42 +68,14 @@ export default {
   line-height: 64px;
   padding-left:9px;
 }
-.navbg {
+.nav-bg {
   background-color: #64a51a;
 }
-.navbar {
+.nav-menu {
   height: 64px;
-  line-height: 64px;
-  border-radius: 0px !important;
-  .screenfull {
-    position: absolute;
-    right: 64px;
-    top: 16px;
-    color: red;
-  }
-  .avatar-container {
-    height: 64px;
-    display: inline-block;
-    position: absolute;
-    right: 35px;
-    .avatar-wrapper {
-      cursor: pointer;
-      margin-top: 12px;
-      position: relative;
-      .user-avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 10px;
-      }
-      .el-icon-caret-bottom {
-        position: absolute;
-        color: white;
-        right: -16px;
-        top: 25px;
-        font-size: 12px;
-      }
-    }
-  }
+  font-weight:bold;
+  font-family: "Hiragino Sans GB";
+  float: right;
 }
 </style>
 
