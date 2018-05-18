@@ -37,8 +37,6 @@ export default {
   }
   .pg-header{
     height: 64px;
-    background-color: #2459a2;
-    color: white;
   }
   .pg-content .menu {
     position: absolute;

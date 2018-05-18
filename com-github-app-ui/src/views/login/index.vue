@@ -2,20 +2,20 @@
   <div class="login-container">
     <el-form autoComplete="on" :model="loginForm" :rules="loginRules" ref="loginForm" label-position="left" label-width="0px"
              class="card-box login-form">
-      <h3 class="title">vue-element-admin</h3>
+      <h3 class="title">{{$t("message.title")}}</h3>
 
       <el-form-item prop="account">
         <span class="svg-container svg-container_login">
           <svg-icon icon-class="user" />
         </span>
-        <el-input name="account" type="text" v-model="loginForm.account" autoComplete="on" placeholder="帐号" />
+        <el-input name="account" type="text" v-model="loginForm.account" autoComplete="on" :placeholder="this.$t('message.account')" />
       </el-form-item>
 
       <el-form-item prop="password">
             <span class="svg-container">
               <svg-icon icon-class="password"></svg-icon>
             </span>
-        <el-input name="password" :type="pwdType" @keyup.enter.native="handleLogin" v-model="loginForm.password" autoComplete="on" placeholder="密码"></el-input>
+        <el-input name="password" :type="pwdType" @keyup.enter.native="handleLogin" v-model="loginForm.password" autoComplete="on"  :placeholder="this.$t('message.password')"></el-input>
         <span class="show-pwd" @click="showPwd"><svg-icon icon-class="eye" /></span>
       </el-form-item>
 
@@ -25,12 +25,12 @@
         </el-col>
         <el-col :span="16">
           <el-form-item prop="validateCode">
-            <el-input name="validateCode" type="text" v-model="loginForm.validateCode" autoComplete="on" placeholder="验证码" />
+            <el-input name="validateCode" type="text" v-model="loginForm.validateCode" autoComplete="on" :placeholder="this.$t('message.captchaCode')" />
           </el-form-item>
         </el-col>
       </el-row>
       <el-form-item>
-        <el-button type="primary" style="width:100%;" :loading="loading" @click.native.prevent="handleLogin">登录</el-button>
+        <el-button type="primary" style="width:100%;" :loading="loading" @click.native.prevent="handleLogin">{{$t("message.login")}}</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -54,14 +54,14 @@ export default {
   data() {
     const validateAccount = (rule, value, callback) => {
       if (!isvalidUsername(value)) {
-        callback(new Error('请输入正确的用户名'))
+        callback(new Error(this.$t('message.errMsgUserName')))
       } else {
         callback()
       }
     }
     const validatePass = (rule, value, callback) => {
       if (value.length < 5) {
-        callback(new Error('密码不能小于5位'))
+        callback(new Error(this.$t('message.errMsgPwdLength')))
       } else {
         callback()
       }
@@ -71,25 +71,25 @@ export default {
         callback()
       }
       if (value.length !== this.captchaLength) {
-        callback(new Error('验证码长度必须是' + this.captchaLength + '位'))
+        callback(new Error(this.$t('message.errMsgCaptchCodeLength').replace('length', this.captchaLength)))
       } else {
         if (this.captchaModel === 'number') {
           if (/^[0-9]+$/.test(this.loginForm.validateCode)) {
             callback()
           } else {
-            callback(new Error('验证码必须全部为数字'))
+            callback(new Error(this.$t('message.errMsgCaptchMustNumber')))
           }
         } else if (this.captchaModel === 'letter') {
           if (/^[a-z]+$/.test(this.loginForm.validateCode)) {
             callback()
           } else {
-            callback(new Error('验证码必须全部为字母'))
+            callback(new Error(this.$t('message.errMsgCaptchMustChar')))
           }
         } else if (this.captchaModel === 'varchar') {
           if (/^[a-z0-9]+$/.test(this.loginForm.validateCode)) {
             callback()
           } else {
-            callback(new Error('验证码必须由数字和字母组成'))
+            callback(new Error(this.$t('message.errMsgCaptchMustVarchar')))
           }
         }
       }

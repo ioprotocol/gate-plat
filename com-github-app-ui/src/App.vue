@@ -5,7 +5,16 @@
 </template>
 
 <script>
+
 export default {
-  name: 'app'
+  name: 'app',
+  mounted() {
+    this.setTitle()
+  },
+  methods: {
+    setTitle() {
+      document.title = this.$t('message.title')
+    }
+  }
 }
 </script>
