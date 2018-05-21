@@ -35,7 +35,7 @@
 
 <script>
   export default {
-    name: 'MenuTest',
+    name: 'SideBarMenu',
     computed: {
       sidebar() {
         return this.$store.state.app.sidebar

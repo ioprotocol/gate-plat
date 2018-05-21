@@ -5,7 +5,6 @@ const user = {
   state: {
     token: getToken(),
     name: '',
-    avatar: '',
     codes: [],
     roles: [],
     captchaModel: getCaptchaModel(),
@@ -18,9 +17,6 @@ const user = {
     },
     SET_NAME: (state, name) => {
       state.name = name
-    },
-    SET_AVATAR: (state, avatar) => {
-      state.avatar = avatar
     },
     SET_ROLES: (state, roles) => {
       state.roles = roles
@@ -82,7 +78,6 @@ const user = {
           const data = response.data
           commit('SET_ROLES', data.account.role.name)
           commit('SET_NAME', data.account.name)
-          commit('SET_AVATAR', process.env.BASE_API + '/open/avatar?imgName=' + data.account.photoUrl + '&height=80&width=80')
           commit('SET_CODES', data.list)
           resolve(response)
         }).catch(error => {

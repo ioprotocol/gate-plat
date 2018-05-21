@@ -2,9 +2,9 @@
   <div>
     <div class="pg-header"><navbar/></div>
     <div v-bind:class="{ 'pg-content': sidebar.opened, 'pg-content-collapse': !sidebar.opened }">
-      <div v-bind:class="{ 'menu': sidebar.opened, 'menu-collapse': !sidebar.opened}" class="left"><menu-test></menu-test></div>
+      <div v-bind:class="{ 'menu': sidebar.opened, 'menu-collapse': !sidebar.opened}" class="left"><side-bar-menu></side-bar-menu></div>
       <div v-bind:class="{'content': sidebar.opened, 'content-collapse': ! sidebar.opened}" class="content left">
-        <status-bar class="status-bar"></status-bar>
+        <status-bar></status-bar>
         <app-main></app-main>
       </div>
     </div>
@@ -12,16 +12,15 @@
 </template>
 
 <script>
-import { Navbar, Sidebar, AppMain, StatusBar, MenuTest } from '@/views/layout/components'
+import { Navbar, AppMain, StatusBar, SideBarMenu } from '@/views/layout/components'
 
 export default {
   name: 'layout',
   components: {
     Navbar,
-    Sidebar,
     AppMain,
     StatusBar,
-    MenuTest
+    SideBarMenu
   },
   computed: {
     sidebar() {
