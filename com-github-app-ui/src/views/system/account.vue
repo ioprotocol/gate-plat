@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div style="width:80%;">
 
     <el-form inline>
       <el-form-item label="角色">

@@ -18,7 +18,7 @@
             </el-dropdown-menu>
           </el-dropdown>
         </div>
-        <el-menu mode="horizontal" default-active="vuedashboard" text-color="#FFF" background-color="#64a51a" active-text-color="#d1dbe5" class="nav-menu" @select="menuClick">
+        <el-menu mode="horizontal" default-active="vuedashboard" text-color="#FFF" background-color="#64a51a" active-text-color="#ffd04b" class="nav-menu" @select="menuClick">
           <template v-for="item in navMenu">
             <el-menu-item :index="item.code">{{item.name}}</el-menu-item>
           </template>
@@ -72,7 +72,7 @@ export default {
       var idx = 0
       for (idx = 0; idx < this.$router.options.routes.length; idx++) {
         if (this.$router.options.routes[idx].hasOwnProperty('code')) {
-          if (isItemInArray(this.codes, this.$router.options.routes[idx].code)) {
+          if (index === this.$router.options.routes[idx].code) {
             var menu = {}
             menu.path = this.$router.options.routes[idx].path
             menu.component = this.$router.options.routes[idx].component
@@ -96,6 +96,11 @@ export default {
             }
           }
         }
+      }
+      this.$store.commit('SET_SIDE_MENU', myArray)
+      if (index === 'vuedashboard') {
+        this.$store.commit('CLOSE_SIDEBAR')
+        this.$router.push({ path: '/' })
       }
     }
   }

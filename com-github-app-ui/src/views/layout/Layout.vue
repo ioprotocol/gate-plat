@@ -3,9 +3,9 @@
     <div class="pg-header"><navbar/></div>
     <div v-bind:class="{ 'pg-content': sidebar.opened, 'pg-content-collapse': !sidebar.opened }">
       <div v-bind:class="{ 'menu': sidebar.opened, 'menu-collapse': !sidebar.opened}" class="left"><side-bar-menu></side-bar-menu></div>
-      <div v-bind:class="{'content': sidebar.opened, 'content-collapse': ! sidebar.opened}" class="content left">
+      <div v-bind:class="{'content': sidebar.opened, 'content-collapse': !sidebar.opened}" class="content left">
         <status-bar></status-bar>
-        <app-main></app-main>
+        <app-main style="padding:1px;"></app-main>
       </div>
     </div>
   </div>
