@@ -23,7 +23,7 @@
         <el-button type="danger" @click="deleteLog" size="mini">清空所有日志</el-button>
       </el-form-item>
     </el-form>
-    <el-table :data="list" v-loading.body="listLoading" element-loading-text="Loading" border fit highlight-current-row  max-height="760" style="width: 100%">
+    <el-table :data="list" v-loading.body="listLoading" element-loading-text="Loading" border fit highlight-current-row>
       <el-table-column label="时间" width="180" align="center">
         <template slot-scope="scope">
           {{formattimeStr(scope.row.logId)}}

@@ -1,5 +1,5 @@
 <template>
-  <div style="width:80%;">
+  <div class="app-container">
 
     <el-form inline>
       <el-form-item label="角色">
@@ -21,8 +21,7 @@
       </el-form-item>
     </el-form>
 
-    <el-table :data="list" v-loading.body="listLoading" element-loading-text="Loading" border fit highlight-current-row
-              max-height="760" style="width: 100%">
+    <el-table :data="list" v-loading.body="listLoading" element-loading-text="Loading" border fit highlight-current-row>
       <el-table-column label="帐号" width="180" align="center">
         <template slot-scope="scope">
           {{scope.row.account}}

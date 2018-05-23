@@ -25,7 +25,7 @@
         <el-button type="primary" @click="fetchData" size="mini">刷新</el-button>
       </el-form-item>
     </el-form>
-    <el-table :data="list" @sort-change=sortChange v-loading.body="listLoading" element-loading-text="Loading" border fit highlight-current-row  max-height="760" style="width: 100%" :default-sort = "{prop: 'mean', order: 'descending'}">
+    <el-table :data="list" @sort-change=sortChange v-loading.body="listLoading" element-loading-text="Loading" border fit highlight-current-row  max-height="600px" style="width: 100%" :default-sort = "{prop: 'mean', order: 'descending'}">
       <el-table-column label="资源" width="120" align="center" >
         <template slot-scope="scope">
           {{scope.row.name}}

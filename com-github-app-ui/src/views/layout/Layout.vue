@@ -1,11 +1,11 @@
 <template>
-  <div>
-    <div class="pg-header"><navbar/></div>
-    <div v-bind:class="{ 'pg-content': sidebar.opened, 'pg-content-collapse': !sidebar.opened }">
-      <div v-bind:class="{ 'menu': sidebar.opened, 'menu-collapse': !sidebar.opened}" class="left"><side-bar-menu></side-bar-menu></div>
-      <div v-bind:class="{'content': sidebar.opened, 'content-collapse': !sidebar.opened}" class="content left">
+  <div class="app-wrapper">
+    <div style="height:64px;"><navbar/></div>
+    <div style="top:64px;bottom:0;left:0;right:0;position:absolute;background-color: #FAFAFA;">
+      <div v-bind:class="{ 'menu': sidebar.opened, 'menu-collapse': !sidebar.opened}"><side-bar-menu></side-bar-menu></div>
+      <div v-bind:class="{'content': sidebar.opened, 'content-collapse': !sidebar.opened}">
         <status-bar></status-bar>
-        <app-main style="padding:1px;"></app-main>
+        <app-main></app-main>
       </div>
     </div>
   </div>
@@ -31,42 +31,41 @@ export default {
 </script>
 
 <style>
-  .left{
-    float: left;
+  .app-wrapper {
+    @include clearfix;
+    height: 100%;
+    width: 100%;
+    background-color: #FFF;
   }
-  .pg-header{
-    height: 64px;
-  }
-  .pg-content .menu {
-    position: absolute;
-    top:64px;
+  .menu {
+    position:absolute;
+    top: 2px;
     left: 0;
     bottom: 0;
     width: 200px;
-    background-color: #dddddd;
+    background-color: #FFF;
   }
-  .content{
-    position: absolute;
-    top: 64px;
-    right: 0;
-    bottom: 0;
-    left: 200px;
-    overflow: hidden;
-  }
-  .pg-content-collapse .menu-collapse {
-    position: absolute;
-    top:64px;
+  .menu-collapse {
+    position:absolute;
+    top: 2px;
     left: 0;
     bottom: 0;
     width: 64px;
-    background-color: #dddddd;
+    height: 100%;
+    background-color: #FFF;
+  }
+  .content{
+    position:absolute;
+    top: 2px;
+    right: 0;
+    bottom: 0;
+    left: 200px;
   }
   .content-collapse {
-    position: absolute;
-    top: 64px;
+    position:absolute;
+    top: 2px;
     right: 0;
     bottom: 0;
     left: 64px;
-    overflow: hidden;
   }
 </style>
