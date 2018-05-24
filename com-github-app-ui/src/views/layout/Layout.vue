@@ -1,11 +1,13 @@
 <template>
   <div class="app-wrapper">
     <div style="height:64px;"><navbar/></div>
-    <div style="top:64px;bottom:0;left:0;right:0;position:absolute;background-color: #FAFAFA;">
+    <div style="position:absolute;top:64px;bottom:0;left:0;right:0;">
       <div v-bind:class="{ 'menu': sidebar.opened, 'menu-collapse': !sidebar.opened}"><side-bar-menu></side-bar-menu></div>
       <div v-bind:class="{'content': sidebar.opened, 'content-collapse': !sidebar.opened}">
-        <status-bar></status-bar>
-        <app-main></app-main>
+        <div>
+          <status-bar></status-bar>
+          <app-main></app-main>
+        </div>
       </div>
     </div>
   </div>
@@ -30,12 +32,12 @@ export default {
 }
 </script>
 
-<style>
+<style rel="stylesheet/scss">
   .app-wrapper {
     @include clearfix;
     height: 100%;
     width: 100%;
-    background-color: #FFF;
+    overflow: hidden;
   }
   .menu {
     position:absolute;
@@ -43,7 +45,6 @@ export default {
     left: 0;
     bottom: 0;
     width: 200px;
-    background-color: #FFF;
   }
   .menu-collapse {
     position:absolute;
@@ -51,8 +52,7 @@ export default {
     left: 0;
     bottom: 0;
     width: 64px;
-    height: 100%;
-    background-color: #FFF;
+
   }
   .content{
     position:absolute;
@@ -60,6 +60,7 @@ export default {
     right: 0;
     bottom: 0;
     left: 200px;
+    border-left:1px solid #E0E0E0;
   }
   .content-collapse {
     position:absolute;
@@ -67,5 +68,6 @@ export default {
     right: 0;
     bottom: 0;
     left: 64px;
+    border-left:1px solid #E0E0E0;
   }
 </style>

@@ -177,6 +177,7 @@
     },
     mounted() {
       this.fetchData()
+      console.log(window.innerHeight)
     },
     methods: {
       fetchData() {

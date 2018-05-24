@@ -1,10 +1,10 @@
 <template>
-  <el-menu :collapse="!sidebar.opened" class="side-menu">
+  <el-menu :collapse="!sidebar.opened" :unique-opened="true" style="border-right:0;">
     <template v-for="item in sideMenu" v-if="item.children">
       <router-link v-if="item.children.length===1 && !item.children[0].children" :to="item.path+item.children[0].path" :key="item.name">
         <el-menu-item :index="item.path+'/'+item.children[0].path">
           <svg-icon v-if="item.icon" :icon-class="item.icon" font-size="16px"></svg-icon>
-          <span v-bind:class="{ 'hide-menu-name': !sidebar.opened, 'show-menu-name': sidebar.opened}" style="padding-left:16px;" v-if="item.name">{{item.name}}</span>
+          <span style="padding-left:16px;padding-right:16px;" slot="title">{{item.name}}</span>
         </el-menu-item>
       </router-link>
 
@@ -43,10 +43,6 @@ export default {
 }
 </script>
 <style>
-  .side-menu {
-    background-color: #FFF;
-    unique-opened: true;
-  }
   .hide-menu-name {
     visibility: hidden;
   }
