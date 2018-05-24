@@ -39,11 +39,13 @@ export default {
       img_logo
     }
   },
+  mounted() {
+    this.menuClick('vuedashboard')
+  },
   computed: {
     ...mapGetters([
       'sidebar',
-      'codes',
-      'avatar'
+      'codes'
     ]),
     navMenu() {
       var myArray = []
