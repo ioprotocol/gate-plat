@@ -8,13 +8,13 @@
     <el-col :xs="12" :sm="14" :md="15" :lg="16" :xl="19" >
       <el-row type="flex" justify="end" align="middle" ><el-col :span="24">
         <div style="margin-right:24px;margin-left:24px;height:64px;line-height:64px;float:right;text-align:center;">
-          <el-dropdown>
+          <el-dropdown size="small" @command="menuCommand">
             <span><svg-icon icon-class="mine" font-size="20px"/></span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>账户设置</el-dropdown-item>
-              <el-dropdown-item>修改密码</el-dropdown-item>
-              <el-dropdown-item divided>皮肤设置</el-dropdown-item>
-              <el-dropdown-item>退出</el-dropdown-item>
+              <el-dropdown-item command="accountSet">账户设置</el-dropdown-item>
+              <el-dropdown-item command="passwordEdit">修改密码</el-dropdown-item>
+              <el-dropdown-item command="themeSet" divided>皮肤设置</el-dropdown-item>
+              <el-dropdown-item command="exit">退出</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </div>
@@ -68,6 +68,9 @@ export default {
       this.$store.dispatch('LogOut').then(() => {
         location.reload() // 为了重新实例化vue-router对象 避免bug
       })
+    },
+    menuCommand(cmd) {
+      console.log(cmd)
     },
     menuClick(index) {
       var myArray = []
