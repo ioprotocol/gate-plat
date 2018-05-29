@@ -1,5 +1,5 @@
 <template>
-  <el-menu :collapse="!sidebar.opened" :unique-opened="true" style="border-right:0;">
+  <el-menu :collapse="!sidebar.opened" :unique-opened="true" :collapse-transition="false" style="border-right:0;">
     <template v-for="item in sideMenu" v-if="item.children">
       <router-link v-if="item.children.length===1 && !item.children[0].children" :to="item.path+item.children[0].path" :key="item.name">
         <el-menu-item :index="item.path+'/'+item.children[0].path">
