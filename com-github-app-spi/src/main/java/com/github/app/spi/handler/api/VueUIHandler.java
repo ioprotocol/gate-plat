@@ -23,8 +23,6 @@ public class VueUIHandler implements AuthUriHandler {
         list.add(Popedom.builder().name("vue[系统管理]").remark("网页权限，系统管理菜单").code("vuesystemmgr").build());
         list.add(Popedom.builder().name("vue[账号管理]").remark("网页权限，帐号管理页面").code("vueaccountmgr").build());
         list.add(Popedom.builder().name("vue[在线用户]").remark("网页权限，在线用户页面").code("vueonlineaccount").build());
-        list.add(Popedom.builder().name("vue[密码修改]").remark("网页权限，密码修改页面").code("vueaccountpwd").build());
-        list.add(Popedom.builder().name("vue[账号信息]").remark("网页权限，当前登录帐号信息页面").code("vueaccountinfo").build());
         list.add(Popedom.builder().name("vue[角色管理]").remark("网页权限，角色管理页面").code("vuerolemgr").build());
         list.add(Popedom.builder().name("vue[数据备份]").remark("网页权限，数据备份页面").code("vuedbback").build());
         list.add(Popedom.builder().name("vue[日志管理]").remark("网页权限，日志管理页面").code("vuelogmgr").build());
