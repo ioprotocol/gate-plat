@@ -79,7 +79,7 @@
 
     <base-pagination :total="total" v-on:change="fetchData" ref="pageinfo"></base-pagination>
 
-    <el-dialog title="帐号信息" :visible.sync="editDialogVisible" width="30%" center>
+    <el-dialog title="帐号信息" :visible.sync="editDialogVisible" width="40%" center>
       <el-form :model="account" :rules="rules" ref="editForm">
         <el-form-item label="姓名" label-width="120px" prop="name">
           <el-input v-model="account.name" auto-complete="off"></el-input>

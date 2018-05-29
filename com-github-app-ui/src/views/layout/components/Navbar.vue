@@ -11,10 +11,10 @@
           <el-dropdown size="small" @command="menuCommand">
             <span><svg-icon icon-class="mine" font-size="20px"/></span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="accountSet">账户设置</el-dropdown-item>
-              <el-dropdown-item command="passwordEdit">修改密码</el-dropdown-item>
-              <el-dropdown-item command="themeSet" divided>皮肤设置</el-dropdown-item>
-              <el-dropdown-item command="exit">退出</el-dropdown-item>
+              <el-dropdown-item command="accountSet">{{$t("message.accountSet")}}</el-dropdown-item>
+              <el-dropdown-item command="passwordEdit">{{$t("message.editPassword")}}</el-dropdown-item>
+              <el-dropdown-item command="themeSet" divided>{{$t("message.themeSet")}}</el-dropdown-item>
+              <el-dropdown-item command="exit">{{$t("message.exit")}}</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </div>
@@ -25,6 +25,8 @@
         </el-menu>
       </el-col></el-row>
     </el-col>
+    <editaccount/>
+    <editpwd />
   </el-row>
 </template>
 
@@ -32,8 +34,12 @@
 import { mapGetters } from 'vuex'
 import img_logo from '@/assets/logo.png'
 import { isItemInArray } from '@/utils/index'
+import Bus from '@/utils/bus'
+import editaccount from '../../system/editaccount'
+import editpwd from '../../system/editpwd'
 
 export default {
+  components: { editaccount, editpwd },
   data() {
     return {
       img_logo
@@ -70,7 +76,15 @@ export default {
       })
     },
     menuCommand(cmd) {
-      console.log(cmd)
+      if (cmd === 'accountSet') {
+        Bus.$emit('accountSet', 'click')
+      } else if (cmd === 'passwordEdit') {
+        Bus.$emit('passwordEdit', 'click')
+      } else if (cmd === 'themeSet') {
+        Bus.$emit('themeSet', 'click')
+      } else if (cmd === 'exit') {
+        this.logout()
+      }
     },
     menuClick(index) {
       var myArray = []

@@ -48,8 +48,6 @@ export const constantRouterMap = [
     code: 'vuesystemmgr',
     children: [
       { path: 'account/list', name: '账号管理', code: 'vueaccountmgr', component: () => import('@/views/system/account') },
-      { path: 'account/pwd', name: '密码修改', code: 'vueaccountpwd', component: () => import('@/views/system/editpwd') },
-      { path: 'account/edit', name: '账号信息', code: 'vueaccountinfo', component: () => import('@/views/system/editaccount') },
       { path: 'role/list', name: '角色管理', code: 'vuerolemgr', component: () => import('@/views/system/role') },
       { path: 'sysBackup', name: '数据备份', code: 'vuedbback', component: () => import('@/views/system/databack') },
       { path: 'log/list', name: '日志管理', code: 'vuelogmgr', component: () => import('@/views/system/log') },
