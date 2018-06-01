@@ -13,8 +13,10 @@
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item command="accountSet">{{$t("message.accountSet")}}</el-dropdown-item>
               <el-dropdown-item command="passwordEdit">{{$t("message.editPassword")}}</el-dropdown-item>
+              <!--
               <el-dropdown-item command="themeSet" divided>{{$t("message.themeSet")}}</el-dropdown-item>
-              <el-dropdown-item command="exit">{{$t("message.exit")}}</el-dropdown-item>
+              -->
+              <el-dropdown-item command="exit" divided>{{$t("message.exit")}}</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </div>
