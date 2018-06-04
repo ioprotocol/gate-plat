@@ -54,13 +54,13 @@ public class ProtocolFactory {
 		return null;
 	}
 
-	public ByteBuf encode(JsonObject jsonObject) {
+	public ByteBuf encode(ByteBuf byteBuf, JsonObject jsonObject) {
 		String namespace = jsonObject.getString("namespace");
 		Integer version = jsonObject.getInteger("version");
 		if (version == null) {
 			version = 0;
 		}
-		return protocolFactory.get(namespace).get(version).encode(jsonObject);
+		return protocolFactory.get(namespace).get(version).encode(byteBuf, jsonObject);
 	}
 
 }

@@ -4,7 +4,6 @@ import com.github.gate.protocol.core.coder.ModuleCoder;
 import com.github.gate.protocol.type.*;
 import com.github.gate.protocol.utils.RangeUtils;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.ByteBufUtil;
 import io.vertx.core.json.JsonObject;
 
@@ -118,13 +117,13 @@ public class ProtocolCoder implements ProtocolContext {
 		return obj;
 	}
 
-	public ByteBuf encode(JsonObject jsonObject) {
+	public ByteBuf encode(ByteBuf byteBuf, JsonObject jsonObject) {
 		if (validProperties != null) {
-			ByteBuf buf = getModuleCoder(mainGroupName, mainModuleName).encode(ByteBufAllocator.DEFAULT.buffer(), jsonObject, this);
+			ByteBuf buf = getModuleCoder(mainGroupName, mainModuleName).encode(byteBuf, jsonObject, this);
 			validProperties.setValidValue(buf);
 			return buf;
 		} else {
-			return getModuleCoder(mainGroupName, mainModuleName).encode(ByteBufAllocator.DEFAULT.buffer(), jsonObject, this);
+			return getModuleCoder(mainGroupName, mainModuleName).encode(byteBuf, jsonObject, this);
 		}
 	}
 
