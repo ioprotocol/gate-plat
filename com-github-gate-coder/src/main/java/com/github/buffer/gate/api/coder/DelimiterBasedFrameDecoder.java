@@ -2,9 +2,14 @@ package com.github.buffer.gate.api.coder;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
+import io.netty.buffer.UnpooledByteBufAllocator;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 
+/**
+ * 基于分隔符的解码器 TCP流时处理字节流的粘包问题
+ *
+ */
 public class DelimiterBasedFrameDecoder extends ByteToMessageDecoder {
     private static final int DEFAULT_MAX_BYTES_IN_MESSAGE = 8092;
 
@@ -16,6 +21,16 @@ public class DelimiterBasedFrameDecoder extends ByteToMessageDecoder {
         this(DEFAULT_MAX_BYTES_IN_MESSAGE, headerDelimiter, tailerDelimiter);
     }
 
+    public DelimiterBasedFrameDecoder(String headerDelimiter, String tailerDelimiter) {
+        this(ByteBufUtil.decodeHexDump(headerDelimiter), ByteBufUtil.decodeHexDump(tailerDelimiter));
+    }
+
+    public DelimiterBasedFrameDecoder(byte[] headerDelimiter, byte[] tailerDelimiter) {
+        this.maxBytesInMessage = DEFAULT_MAX_BYTES_IN_MESSAGE;
+        this.headerDelimiter = UnpooledByteBufAllocator.DEFAULT.buffer(headerDelimiter.length).writeBytes(headerDelimiter);
+        this.tailerDelimiter = UnpooledByteBufAllocator.DEFAULT.buffer(headerDelimiter.length).writeBytes(tailerDelimiter);
+    }
+
     public DelimiterBasedFrameDecoder(int maxBytesInMessage, ByteBuf headerDelimiter, ByteBuf tailerDelimiter) {
         this.maxBytesInMessage = maxBytesInMessage;
         this.headerDelimiter = headerDelimiter;
@@ -24,39 +39,40 @@ public class DelimiterBasedFrameDecoder extends ByteToMessageDecoder {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf buffer, java.util.List<Object> out) {
-        try {
-            if (buffer.readableBytes() < headerDelimiter.readableBytes()) {
-                return;
+        int startIndex = ByteBufUtil.indexOf(headerDelimiter, buffer);
+        if (startIndex == -1) {
+            buffer.skipBytes(buffer.readableBytes());
+            return;
+        }
+        buffer.readerIndex(startIndex);
+
+        int endIndex = ByteBufUtil.indexOf(tailerDelimiter, buffer);
+        // TCP 半包，继续接收
+        if (endIndex == -1) {
+            return;
+        }
+
+        while (startIndex != -1) {
+            ByteBuf msg = buffer.readRetainedSlice(endIndex - startIndex + tailerDelimiter.readableBytes());
+            out.add(msg);
+
+            buffer.skipBytes(endIndex - startIndex + tailerDelimiter.readableBytes());
+            if (!buffer.isReadable()) {
+                break;
             }
 
-            int readerIndex = buffer.readerIndex();
-            int readableBytes = buffer.readableBytes();
-
-            int headerIndex = ByteBufUtil.indexOf(headerDelimiter, buffer);
-            if (headerIndex != -1) {
-                buffer.skipBytes(headerIndex + headerDelimiter.readableBytes() - readerIndex);
-                int tailerIndex = ByteBufUtil.indexOf(tailerDelimiter, buffer);
-                if (tailerIndex == -1) {
-                    buffer.readerIndex(readerIndex);
-                    return;
-                } else {
-                    int length = tailerIndex - headerIndex + tailerDelimiter.readableBytes();
-                    if (length == readableBytes) {
-                        out.add(buffer.readerIndex(readerIndex));
-                    } else {
-                        ByteBuf msg = buffer.retainedSlice(headerIndex, length);
-                        out.add(msg);
-                        buffer.skipBytes(length - headerDelimiter.readableBytes());
-                    }
-                }
-            }
-
-            if (buffer.readableBytes() > maxBytesInMessage) {
+            startIndex = ByteBufUtil.indexOf(headerDelimiter, buffer);
+            if (startIndex == -1) {
                 buffer.skipBytes(buffer.readableBytes());
                 return;
             }
-        } catch (Exception e) {
-            buffer.skipBytes(actualReadableBytes());
+            buffer.readerIndex(startIndex);
+            endIndex = ByteBufUtil.indexOf(tailerDelimiter, buffer);
+            // TCP 半包，继续接收
+            if (endIndex == -1) {
+                return;
+            }
+
         }
     }
 }
