@@ -10,6 +10,10 @@ import com.github.app.spi.utils.CaptchaFactory;
 import com.github.app.utils.ServerEnvConstant;
 import com.github.cage.Cage;
 import com.github.cage.GCage;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.util.concurrent.RateLimiter;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.auth.KeyStoreOptions;
@@ -24,6 +28,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import java.io.ByteArrayOutputStream;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class JWTIssueHandler implements OpenUriHandler {
@@ -39,6 +44,15 @@ public class JWTIssueHandler implements OpenUriHandler {
     private static final CaptchaFactory captchaFactory;
 
     private Cage cage = new GCage();
+    private LoadingCache<String, RateLimiter> qpsLimiterCache = CacheBuilder.newBuilder()
+            .expireAfterAccess(5*60, TimeUnit.SECONDS)
+            .maximumSize(20000)
+            .build(new CacheLoader<String, RateLimiter>() {
+                @Override
+                public RateLimiter load(String key) throws Exception {
+                    return RateLimiter.create(3);
+                }
+            });
 
     static {
         AppServerConfig sysConfig = AppServerConfigLoader.getServerCfg();
@@ -84,6 +98,17 @@ public class JWTIssueHandler implements OpenUriHandler {
     }
 
     public void issueJWTToken(RoutingContext routingContext) {
+
+        String remoteAddress = routingContext.request().remoteAddress().toString();
+        try {
+            if (qpsLimiterCache.get(remoteAddress).tryAcquire()) {
+                responseOperationFailed(routingContext, "访问过于频繁");
+                return;
+            }
+        } catch (Exception e) {
+            responseOperationFailed(routingContext, e);
+            return;
+        }
 
         JsonObject jsonObject = new JsonObject(routingContext.getBodyAsString());
 
