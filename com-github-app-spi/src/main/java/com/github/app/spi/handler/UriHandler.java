@@ -154,14 +154,6 @@ public interface UriHandler {
         responseSuccess(routingContext, null, data);
     }
 
-    default void responseSuccess(RoutingContext routingContext, JsonObject data) {
-        responseSuccess(routingContext, null, data);
-    }
-
-    default void responseSuccess(RoutingContext routingContext, JsonArray data) {
-        responseSuccess(routingContext, null, data);
-    }
-
     /**
      * @param routingContext
      * @param msg
