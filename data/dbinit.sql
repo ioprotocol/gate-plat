@@ -12,4 +12,4 @@ CREATE TABLE role ( role_id int(11) unsigned NOT NULL AUTO_INCREMENT, name varch
 drop table if exists role_popedom
 CREATE TABLE role_popedom(role_id int(11) DEFAULT NULL,popedom_id int(11) DEFAULT NULL,UNIQUE KEY role_id (role_id,popedom_id))
 INSERT INTO role VALUES (1,'超级管理员')
-INSERT INTO account VALUES (1,1,'administrator','8495179A39AE1BF4F5A6084A9388D5BE4D38EDF026922D41862F89B0','超级管理员','男','xsy870712@163.com','15315086265',1,NULL,NULL,NULL)
+INSERT INTO account VALUES (1,1,'administrator','#$#RyK10fWa$eBEHCX6VRk1msyBwRj2je/','超级管理员','男','xsy870712@163.com','15315086265',1,NULL,NULL,NULL)

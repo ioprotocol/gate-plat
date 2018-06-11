@@ -50,7 +50,7 @@ public class JWTIssueHandler implements OpenUriHandler {
             .build(new CacheLoader<String, RateLimiter>() {
                 @Override
                 public RateLimiter load(String key) throws Exception {
-                    return RateLimiter.create(3);
+                    return RateLimiter.create(10);
                 }
             });
 
@@ -101,7 +101,7 @@ public class JWTIssueHandler implements OpenUriHandler {
 
         String remoteAddress = routingContext.request().remoteAddress().toString();
         try {
-            if (qpsLimiterCache.get(remoteAddress).tryAcquire()) {
+            if (!qpsLimiterCache.get(remoteAddress).tryAcquire()) {
                 responseOperationFailed(routingContext, "访问过于频繁");
                 return;
             }

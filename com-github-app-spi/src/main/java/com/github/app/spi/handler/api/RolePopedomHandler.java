@@ -56,7 +56,7 @@ public class RolePopedomHandler implements AuthUriHandler {
     }
 
     public void saveOrUpdate(RoutingContext routingContext) {
-        Role role = routingContext.getBodyAsJson().mapTo(Role.class);
+        Role role = mapTo(routingContext.getBody(), Role.class);
         if (StringUtils.isEmpty(role.getName())) {
             responseOperationFailed(routingContext, "name must be filled");
             return;

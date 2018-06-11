@@ -62,7 +62,7 @@ public class AccountHandler implements AuthUriHandler {
     }
 
     public void enable(RoutingContext routingContext) {
-        Account account = routingContext.getBodyAsJson().mapTo(Account.class);
+        Account account = mapTo(routingContext.getBody(), Account.class);
 
         if (account.getAccountId() == 1) {
             responseOperationFailed(routingContext, "超级管理员帐号不允许禁用");
@@ -74,7 +74,7 @@ public class AccountHandler implements AuthUriHandler {
     }
 
     public void save(RoutingContext routingContext) {
-        Account account = routingContext.getBodyAsJson().mapTo(Account.class);
+        Account account = mapTo(routingContext.getBody(), Account.class);
 
         if (StringUtils.isEmpty(account.getAccount())) {
             responseOperationFailed(routingContext, "帐号不能为空");
@@ -94,7 +94,7 @@ public class AccountHandler implements AuthUriHandler {
      * 不允许修改账号密码状态角色信息
      */
     public void update(RoutingContext routingContext) {
-        Account account = routingContext.getBodyAsJson().mapTo(Account.class);
+        Account account = mapTo(routingContext.getBody(), Account.class);
 
         if (StringUtils.isEmpty(account.getAccount())) {
             responseOperationFailed(routingContext, "帐号不能为空");

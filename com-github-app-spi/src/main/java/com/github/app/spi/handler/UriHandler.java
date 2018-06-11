@@ -1,5 +1,6 @@
 package com.github.app.spi.handler;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.app.spi.dao.domain.Popedom;
 import com.github.app.utils.JacksonUtils;
 import io.netty.buffer.ByteBuf;
@@ -170,4 +171,26 @@ public interface UriHandler {
         response(routingContext, CODE_SUCCESS, msg, data);
     }
 
+    /**
+     * 更为节省内存的序列化方法
+     *
+     * @param buffer
+     * @param cls
+     * @param <T>
+     * @return
+     */
+    default <T> T mapTo(Buffer buffer, Class<T> cls) {
+        return JacksonUtils.deserialize(buffer.getByteBuf(), cls);
+    }
+
+    /**
+     *
+     * @param buffer
+     * @param reference
+     * @param <T>
+     * @return
+     */
+    default <T> T mapTo(Buffer buffer, TypeReference<T> reference) {
+        return JacksonUtils.deserialize(buffer.getByteBuf(), reference);
+    }
 }
