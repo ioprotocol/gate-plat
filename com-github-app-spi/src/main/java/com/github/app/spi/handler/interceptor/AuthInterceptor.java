@@ -23,6 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import static com.github.app.spi.handler.JsonResponse.*;
+
 @Component
 public class AuthInterceptor implements UriHandler {
     private static JWTAuthOptions jwtAuthOptions;

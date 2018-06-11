@@ -2,6 +2,9 @@ package com.github.app.spi.handler;
 
 import com.github.app.spi.dao.domain.Popedom;
 import com.github.app.utils.JacksonUtils;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.PooledByteBufAllocator;
+import io.vertx.core.buffer.Buffer;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
@@ -13,6 +16,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.List;
 
+import static com.github.app.spi.handler.JsonResponse.*;
+
 /**
  * json format { "code" : 0, "msg"  : "success", "data": {} }
  */
@@ -21,35 +26,6 @@ public interface UriHandler {
     Logger logger = LogManager.getLogger(UriHandler.class);
 
     String CONTENT_TYPE = "application/json;charset=UTF-8";
-
-    /**
-     * api operation success
-     */
-    int CODE_SUCCESS = 0;
-    /**
-     * JWT token illegal
-     */
-    int CODE_JWT_TOKEN_INVALIDATE = -1;
-    /**
-     * JWT token timeout
-     */
-    int CODE_JWT_TOKEN_TIMEOUT = -2;
-    /**
-     * JWT token not filled into http headers with name {X-Token}
-     */
-    int CODE_JWT_TOKEN_MISSING = -3;
-    /**
-     * This user have login
-     */
-    int CODE_USER_HAVE_LOGINED = -4;
-    /**
-     * api operation failed
-     */
-    int CODE_API_OPERATION_FAILED = -5;
-    /**
-     * api operation authentication failed
-     */
-    int CODE_API_AUTHENTICATION_FAILED = -6;
 
 
     /**
@@ -88,22 +64,24 @@ public interface UriHandler {
      * @param data
      */
     default void response(RoutingContext routingContext, Integer code, String msg, Object data) {
-        JsonResponse response = new JsonResponse(code, msg, data);
+        JsonResponse response = JsonResponse.create(code, msg, data);
 
-        if (logger.isInfoEnabled()) {
-            logger.info("\n{}:{} \nheader:{}\n params:{}\n body:{}\n response:{}\n\n",
-                    routingContext.request().method().name(),
-                    routingContext.request().absoluteURI(),
-                    JacksonUtils.serializePretty(routingContext.request().headers().entries()),
-                    JacksonUtils.serializePretty(routingContext.request().params().entries()),
-                    routingContext.getBodyAsString(),
-                    JacksonUtils.serializePretty(response));
-        }
+        ByteBuf byteBuf = PooledByteBufAllocator.DEFAULT.buffer(512);
+        try {
+            JacksonUtils.serialize(response, byteBuf);
+            if (logger.isInfoEnabled()) {
+                logger.info("\n{}:{} \nheader:{}\n params:{}\n body:{}\n response:{}\n\n",
+                        routingContext.request().method().name(),
+                        routingContext.request().absoluteURI(),
+                        JacksonUtils.serializePretty(routingContext.request().headers().entries()),
+                        JacksonUtils.serializePretty(routingContext.request().params().entries()),
+                        routingContext.getBodyAsString(),
+                        JacksonUtils.serializePretty(response));
+            }
 
-        if (data instanceof JsonObject || data instanceof JsonArray) {
-            routingContext.response().end(JsonObject.mapFrom(response).toBuffer());
-        } else {
-            routingContext.response().end(JacksonUtils.serialize(response));
+            routingContext.response().end(Buffer.buffer(byteBuf));
+        } finally {
+            response.recycle();
         }
     }
 

@@ -1,11 +1,25 @@
 package com.github.app.utils;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufInputStream;
+import io.netty.buffer.ByteBufOutputStream;
+import io.vertx.core.json.Json;
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
+
+import java.io.DataInput;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.time.Instant;
+import java.util.Base64;
+
+import static java.time.format.DateTimeFormatter.ISO_INSTANT;
 
 public final class JacksonUtils {
     private static final ObjectMapper objectMapper;
@@ -19,9 +33,50 @@ public final class JacksonUtils {
                 .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)       //忽略map中的null属性
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)//json字符串中有而对象中没有的属性忽略掉
                 .setSerializationInclusion(JsonInclude.Include.NON_NULL);           //忽略bean中的null属性
+        objectMapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
+
+        SimpleModule module = new SimpleModule();
+        // custom types
+        module.addSerializer(JsonObject.class, new JsonObjectSerializer());
+        module.addSerializer(JsonArray.class, new JsonArraySerializer());
+        // he have 2 extensions: RFC-7493
+        module.addSerializer(Instant.class, new InstantSerializer());
+        module.addSerializer(byte[].class, new ByteArraySerializer());
+
+        objectMapper.registerModule(module);
     }
 
     private JacksonUtils() {
+    }
+
+    private static class JsonObjectSerializer extends JsonSerializer<JsonObject> {
+        @Override
+        public void serialize(JsonObject value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
+            jgen.writeObject(value.getMap());
+        }
+    }
+
+    private static class JsonArraySerializer extends JsonSerializer<JsonArray> {
+        @Override
+        public void serialize(JsonArray value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
+            jgen.writeObject(value.getList());
+        }
+    }
+
+    private static class InstantSerializer extends JsonSerializer<Instant> {
+        @Override
+        public void serialize(Instant value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
+            jgen.writeString(ISO_INSTANT.format(value));
+        }
+    }
+
+    private static class ByteArraySerializer extends JsonSerializer<byte[]> {
+        private final Base64.Encoder BASE64 = Base64.getEncoder();
+
+        @Override
+        public void serialize(byte[] value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
+            jgen.writeString(BASE64.encodeToString(value));
+        }
     }
 
     /**
@@ -32,7 +87,6 @@ public final class JacksonUtils {
      * @throws NullPointerException
      */
     public static <T> T deserialize(String jsonStr, Class<T> valueType) {
-
         try {
             return objectMapper.readValue(jsonStr, valueType);
         } catch (Exception e) {
@@ -41,7 +95,22 @@ public final class JacksonUtils {
     }
 
     /**
+     * 直接从Netty ByteBuf反序列化，减少内存copy
      *
+     * @param byteBuf
+     * @param valueType
+     * @param <T>
+     * @return
+     */
+    public static <T> T deserialize(ByteBuf byteBuf, Class<T> valueType) {
+        try {
+            return objectMapper.readValue((DataInput) new ByteBufInputStream(byteBuf), valueType);
+        } catch (Exception e) {
+            throw new RuntimeException("Jackson.deserialize error.", e);
+        }
+    }
+
+    /**
      * @param jsonStr
      * @param reference
      * @param <T>
@@ -49,13 +118,28 @@ public final class JacksonUtils {
      * @throws Exception
      */
     public static <T> T deserialize(String jsonStr, TypeReference<T> reference) {
-
         try {
             return objectMapper.readValue(jsonStr, reference);
         } catch (Exception e) {
             throw new RuntimeException("Jackson.deserialize error.", e);
         }
     }
+
+    /**
+     *
+     * @param byteBuf
+     * @param reference
+     * @param <T>
+     * @return
+     */
+    public static <T> T deserialize(ByteBuf byteBuf, TypeReference<T> reference) {
+        try {
+            return objectMapper.readValue(new ByteBufInputStream(byteBuf), reference);
+        } catch (Exception e) {
+            throw new RuntimeException("Jackson.deserialize error.", e);
+        }
+    }
+
 
     /**
      * @param json
@@ -88,7 +172,22 @@ public final class JacksonUtils {
     }
 
     /**
+     * 直接json序列化为Netty的ByteBuf对象，减少内存复制
      *
+     * @param obj
+     * @param byteBuf
+     * @return
+     */
+    public static ByteBuf serialize(Object obj, ByteBuf byteBuf) {
+        try {
+            objectMapper.writeValue((OutputStream) new ByteBufOutputStream(byteBuf), obj);
+        } catch (Exception e) {
+            throw new RuntimeException("Jackson.serialize error.", e);
+        }
+        return byteBuf;
+    }
+
+    /**
      * @param obj
      * @return
      */

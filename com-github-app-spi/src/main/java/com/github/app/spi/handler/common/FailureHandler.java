@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
+import static com.github.app.spi.handler.JsonResponse.CODE_API_OPERATION_FAILED;
+
 @Component
 public class FailureHandler implements UriHandler {
 
@@ -26,7 +28,7 @@ public class FailureHandler implements UriHandler {
         }
 
         String exception = baos.toString();
-        JsonResponse response = new JsonResponse(CODE_API_OPERATION_FAILED, exception);
+        JsonResponse response = JsonResponse.create(CODE_API_OPERATION_FAILED, exception);
 
         /**
          * 捕获handler的异常，打印错误日志
