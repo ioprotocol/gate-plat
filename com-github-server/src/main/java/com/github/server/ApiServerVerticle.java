@@ -1,4 +1,4 @@
-package com.github.app.server;
+package com.github.server;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonParser;
@@ -38,8 +38,8 @@ import java.util.List;
 
 import static com.github.app.spi.utils.SessionConstant.SESSION_STORE_MAP;
 
-public class HttpServerVerticle extends AbstractVerticle {
-    private Logger logger = LogManager.getLogger(HttpServerVerticle.class);
+public class ApiServerVerticle extends AbstractVerticle {
+    private Logger logger = LogManager.getLogger(ApiServerVerticle.class);
 
     private ApplicationContext applicationContext;
     private HttpServer server;

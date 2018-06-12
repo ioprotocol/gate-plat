@@ -1,6 +1,6 @@
 package com.github.runner;
 
-import com.github.app.server.HttpServerVerticle;
+import com.github.server.ApiServerVerticle;
 import com.github.app.spi.utils.AppServerConfigLoader;
 import com.github.app.utils.ServerEnvConstant;
 import io.vertx.core.DeploymentOptions;
@@ -34,7 +34,7 @@ public class WinBootstrap {
         deploymentOptions.setConfig(JsonObject.mapFrom(AppServerConfigLoader.getServerCfg()));
         vertx = Vertx.vertx(new VertxOptions()
                 .setMetricsOptions(new DropwizardMetricsOptions().setJmxEnabled(true)));
-        vertx.deployVerticle(HttpServerVerticle.class, deploymentOptions, ar -> {
+        vertx.deployVerticle(ApiServerVerticle.class, deploymentOptions, ar -> {
             if (ar.succeeded()) {
                 verticleId = ar.result();
             } else {

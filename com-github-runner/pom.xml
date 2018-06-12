@@ -15,13 +15,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.github.app.server</groupId>
-            <artifactId>com-github-app-server</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.gate.daemon</groupId>
-            <artifactId>com-github-gate-daemon</artifactId>
+            <groupId>com.github.server</groupId>
+            <artifactId>com-github-server</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

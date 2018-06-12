@@ -1,6 +1,6 @@
 package com.github.runner;
 
-import com.github.app.server.HttpServerVerticle;
+import com.github.server.ApiServerVerticle;
 import com.github.app.spi.config.AppServerConfig;
 import com.github.app.spi.services.impl.SystemOperationServiceImpl;
 import com.github.app.spi.utils.AppServerConfigLoader;
@@ -82,7 +82,7 @@ public class ApplicationBoot {
                         DeploymentOptions deploymentOptions = new DeploymentOptions();
                         deploymentOptions.setConfig(JsonObject.mapFrom(AppServerConfigLoader.getServerCfg()));
                         Vertx vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(new DropwizardMetricsOptions().setJmxEnabled(true)));
-                        vertx.deployVerticle(HttpServerVerticle.class, deploymentOptions, ar -> {
+                        vertx.deployVerticle(ApiServerVerticle.class, deploymentOptions, ar -> {
                             if (ar.succeeded()) {
                             } else {
                                 vertx.close();

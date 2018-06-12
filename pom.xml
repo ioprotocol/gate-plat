@@ -14,18 +14,40 @@
         <module>com-github-app-api</module>
         <module>com-github-gate-protocol</module>
         <module>com-github-gate-coder</module>
-        <module>com-github-gate-daemon</module>
-        <module>com-github-gate-server</module>
         <module>com-github-gate-ruler</module>
         <module>distribution</module>
         <module>com-github-app-spi</module>
-        <module>com-github-app-server</module>
+        <module>com-github-server</module>
+        <module>com-github-zookeeper</module>
     </modules>
 
     <properties>
         <vertx.version>3.5.1</vertx.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <bookkeeper.version>4.7.0</bookkeeper.version>
+        <zookeeper.version>3.5.4-beta</zookeeper.version>
+
+        <log4j-1.2-api.version>2.10.0</log4j-1.2-api.version>
+        <log4j.version>2.5</log4j.version>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-1.2-api</artifactId>
+            <version>${log4j-1.2-api.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+    </dependencies>
 
     <build>
         <pluginManagement>

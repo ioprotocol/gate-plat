@@ -22,6 +22,7 @@ public class JsonDecoder extends SimpleChannelInboundHandler<ByteBuf> {
     protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) throws Exception {
         JsonObject jsonObject = protocolFactory.decode(msg);
         if (jsonObject != null) {
+            ctx.fireChannelRead(jsonObject);
         }
     }
 }

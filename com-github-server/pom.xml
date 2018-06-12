@@ -9,11 +9,15 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.github.gate.server</groupId>
-    <artifactId>com-github-gate-server</artifactId>
-    <packaging>jar</packaging>
+    <groupId>com.github.server</groupId>
+    <artifactId>com-github-server</artifactId>
 
     <dependencies>
+        <dependency>
+            <groupId>com.github.app.api</groupId>
+            <artifactId>com-github-app-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.github.gate.protocol</groupId>
             <artifactId>com-github-gate-protocol</artifactId>
