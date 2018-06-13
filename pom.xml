@@ -19,7 +19,6 @@
         <module>com-github-app-spi</module>
         <module>com-github-server</module>
         <module>com-github-zookeeper</module>
-        <module>com-github-zookeeper-utils</module>
     </modules>
 
     <properties>
