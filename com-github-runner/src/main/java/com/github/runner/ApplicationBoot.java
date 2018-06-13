@@ -1,5 +1,6 @@
 package com.github.runner;
 
+import com.github.app.spi.utils.VertxFactory;
 import com.github.server.ApiServerVerticle;
 import com.github.app.spi.config.AppServerConfig;
 import com.github.app.spi.services.impl.SystemOperationServiceImpl;
@@ -8,13 +9,11 @@ import com.github.app.utils.JacksonUtils;
 import com.github.app.utils.ServerEnvConstant;
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
-import io.vertx.core.VertxOptions;
 import io.vertx.core.cli.CLI;
 import io.vertx.core.cli.CLIException;
 import io.vertx.core.cli.CommandLine;
 import io.vertx.core.cli.Option;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.dropwizard.DropwizardMetricsOptions;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
 
@@ -79,9 +78,9 @@ public class ApplicationBoot {
                         break;
                     }
                     case SERVER: {
+                        Vertx vertx = VertxFactory.vertx();
                         DeploymentOptions deploymentOptions = new DeploymentOptions();
                         deploymentOptions.setConfig(JsonObject.mapFrom(AppServerConfigLoader.getServerCfg()));
-                        Vertx vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(new DropwizardMetricsOptions().setJmxEnabled(true)));
                         vertx.deployVerticle(ApiServerVerticle.class, deploymentOptions, ar -> {
                             if (ar.succeeded()) {
                             } else {

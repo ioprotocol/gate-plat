@@ -5,7 +5,8 @@
 
 <generatorConfiguration>
     <!--<properties resource="jdbc.properties"></properties>-->
-    <classPathEntry location="/usr/local/xsy/mavenRepository/mysql/mysql-connector-java/5.1.39/mysql-connector-java-5.1.39.jar" />
+    <!--<classPathEntry location="/usr/local/xsy/mavenRepository/mysql/mysql-connector-java/5.1.39/mysql-connector-java-5.1.39.jar" />-->
+    <classPathEntry location="D:\\mavenRepository/mysql/mysql-connector-java/5.1.39/mysql-connector-java-5.1.39.jar" />
     <context id="testTables" targetRuntime="MyBatis3">
         <property name="suppressAllComments" value="true" />
         <property name="useActualColumnNames" value="false" />
@@ -44,14 +45,14 @@
             <property name="forceBigDecimals" value="false" />
         </javaTypeResolver>
 
-        <javaModelGenerator targetPackage="com.github.app.spi.dao.domain" targetProject="src/main/java">
+        <javaModelGenerator targetPackage="com.github.app.api.dao.domain" targetProject="src/main/java">
             <property name="enableSubPackages" value="true" />
             <property name="trimStrings" value="true" />
         </javaModelGenerator>
         <sqlMapGenerator targetPackage="resources.mapper" targetProject="src/main">
             <property name="enableSubPackages" value="true" />
         </sqlMapGenerator>
-        <javaClientGenerator type="XMLMAPPER" targetPackage="com.github.app.spi.dao.mapper" targetProject="src/main/java">
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.github.app.api.dao.mapper" targetProject="src/main/java">
             <property name="enableSubPackages" value="true" />
         </javaClientGenerator>
         <!--
@@ -60,6 +61,7 @@
         <table schema="mis" tableName="log"></table>
         <table schema="mis" tableName="popedom"></table>
         -->
-        <table schema="mis" tableName="role_popedom"></table>
+        <table schema="mis" tableName="gateway"></table>
+        <table schema="mis" tableName="protocol"></table>
     </context>
 </generatorConfiguration>

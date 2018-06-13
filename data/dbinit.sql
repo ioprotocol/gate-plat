@@ -13,3 +13,5 @@ drop table if exists role_popedom
 CREATE TABLE role_popedom(role_id int(11) DEFAULT NULL,popedom_id int(11) DEFAULT NULL,UNIQUE KEY role_id (role_id,popedom_id))
 INSERT INTO role VALUES (1,'超级管理员')
 INSERT INTO account VALUES (1,1,'administrator','#$#RyK10fWa$eBEHCX6VRk1msyBwRj2je/','超级管理员','男','xsy870712@163.com','15315086265',1,NULL,NULL,NULL)
+create table gateway(gate_id int(11) unsigned not null auto_increment, host_name varchar(60), port int(11), protocol_id int(11), config_properties text, created_time TIMESTAMP, last_modify_time TIMESTAMP, PRIMARY KEY (gate_id))
+create table protocol(protocol_id int(11) unsigned not null auto_increment, name varchar(60), config_properties text, created_time TIMESTAMP, last_modify_time TIMESTAMP, PRIMARY KEY (protocol_id))

@@ -5,7 +5,9 @@ import com.github.app.utils.FieldParser;
 import com.github.app.utils.JacksonUtils;
 import com.github.app.utils.ServerEnvConstant;
 
+import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.Map;
 import java.util.Properties;
 
@@ -20,7 +22,8 @@ public class AppServerConfigLoader {
         try {
             String path = ServerEnvConstant.getAppServerCfgFilePath();
             Properties properties = new Properties();
-            properties.load(new FileInputStream(path));
+            BufferedReader bf = new BufferedReader(new InputStreamReader(new FileInputStream(path),"UTF-8"));
+            properties.load(bf);
             sysConfig = new AppServerConfig();
             FieldParser.update((Map) properties, sysConfig);
             return sysConfig;

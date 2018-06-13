@@ -43,6 +43,17 @@ public class AppServerConfig {
     private int captchaLength = 5;
     private String captchaModel = "letter";
 
+    /**
+     * email configuration
+     */
+    private String emailHostname;
+    private int emailSmtpPort;
+    private String emailUserName;
+    private String emailPassword;
+    private boolean emailSslOnConnect;
+    private String emailFrom;
+    private String emailFromName;
+
     public int getApiPort() {
         return apiPort;
     }
@@ -185,5 +196,61 @@ public class AppServerConfig {
 
     public void setCaptchaModel(String captchaModel) {
         this.captchaModel = captchaModel;
+    }
+
+    public String getEmailHostname() {
+        return emailHostname;
+    }
+
+    public void setEmailHostname(String emailHostname) {
+        this.emailHostname = emailHostname;
+    }
+
+    public int getEmailSmtpPort() {
+        return emailSmtpPort;
+    }
+
+    public void setEmailSmtpPort(int emailSmtpPort) {
+        this.emailSmtpPort = emailSmtpPort;
+    }
+
+    public String getEmailUserName() {
+        return emailUserName;
+    }
+
+    public void setEmailUserName(String emailUserName) {
+        this.emailUserName = emailUserName;
+    }
+
+    public String getEmailPassword() {
+        return emailPassword;
+    }
+
+    public void setEmailPassword(String emailPassword) {
+        this.emailPassword = emailPassword;
+    }
+
+    public boolean isEmailSslOnConnect() {
+        return emailSslOnConnect;
+    }
+
+    public void setEmailSslOnConnect(boolean emailSslOnConnect) {
+        this.emailSslOnConnect = emailSslOnConnect;
+    }
+
+    public String getEmailFrom() {
+        return emailFrom;
+    }
+
+    public void setEmailFrom(String emailFrom) {
+        this.emailFrom = emailFrom;
+    }
+
+    public String getEmailFromName() {
+        return emailFromName;
+    }
+
+    public void setEmailFromName(String emailFromName) {
+        this.emailFromName = emailFromName;
     }
 }
