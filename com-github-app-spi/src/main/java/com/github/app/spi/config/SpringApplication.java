@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -19,6 +20,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
+import java.util.ArrayList;
+import java.util.List;
 
 @Configuration
 @ComponentScan("com.github.app")
@@ -65,7 +68,8 @@ public class SpringApplication {
 
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         try {
-            bean.setMapperLocations(resolver.getResources("classpath:mapper/*.xml"));
+            Resource[] resources = new Resource[]{resolver.getResources("classpath:mapper-spi/*.xml"), resolver.getResources("classpath:mapper-api/*.xml")};
+            bean.setMapperLocations(resources);
             return bean.getObject();
         } catch (Exception e) {
             e.printStackTrace();

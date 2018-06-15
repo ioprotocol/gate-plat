@@ -10,10 +10,10 @@ import java.util.Map;
 public class ValidatorInterceptorImpl implements ValidatorInterceptor {
     @Override
     public void handle(RoutingContext routingContext) {
-        // http query params
-//        processSqlEscape(routingContext.request().params());
-        // http body forms
-//        processSqlEscape(routingContext.request().formAttributes());
+//         http query params
+        processSqlEscape(routingContext.request().params());
+//         http body forms
+        processSqlEscape(routingContext.request().formAttributes());
 
         routingContext.next();
     }
