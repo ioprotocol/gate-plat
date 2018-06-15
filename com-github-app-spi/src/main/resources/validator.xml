@@ -21,60 +21,77 @@
 <form-validation>
     <global>
         <validator name="required"
-                   classname="com.github.app.spi.utils.GenericValidatorImpl"
+                   classname="com.github.app.spi.validator.GenericValidatorImpl"
                    method="validateRequired"
                    methodParams="java.lang.Object, org.apache.commons.validator.Field"
                    msg="字段内容不能为空"/>
-        <validator name="text"
-                   classname="com.github.app.spi.utils.GenericValidatorImpl"
-                   method="validateText"
-                   methodParams="java.lang.Object, org.apache.commons.validator.Field"
-                   msg="字符串中有非法字符"/>
         <validator name="email"
-                   classname="com.github.app.spi.utils.GenericValidatorImpl"
+                   classname="com.github.app.spi.validator.GenericValidatorImpl"
                    method="validateEmail"
                    methodParams="java.lang.Object, org.apache.commons.validator.Field"
                    msg="邮箱格式不正确"/>
-        <validator name="byte"
-                   classname="com.github.app.spi.utils.GenericValidatorImpl"
-                   method="validateByte"
-                   methodParams="java.lang.Object, org.apache.commons.validator.Field"
-                   msg="必须是byte类型"/>
-        <validator name="short"
-                   classname="com.github.app.spi.utils.GenericValidatorImpl"
-                   method="validateShort"
-                   methodParams="java.lang.Object, org.apache.commons.validator.Field"
-                   msg="必须是short类型"/>
-        <validator name="int"
-                   classname="com.github.app.spi.utils.GenericValidatorImpl"
+        <validator name="number"
+                   classname="com.github.app.spi.validator.GenericValidatorImpl"
                    method="validateInt"
                    methodParams="java.lang.Object, org.apache.commons.validator.Field"
-                   msg="必须是int类型"/>
+                   msg="必须是整数类型"/>
+        <validator name="numberRange"
+                   classname="com.github.app.spi.validator.GenericValidatorImpl"
+                   method="validateNumberRange"
+                   methodParams="java.lang.Object, org.apache.commons.validator.Field"
+                   msg="数值超出有效范围"/>
         <validator name="positive"
-                   classname="com.github.app.spi.utils.GenericValidatorImpl"
+                   classname="com.github.app.spi.validator.GenericValidatorImpl"
                    method="validatePositive"
                    methodParams="java.lang.Object, org.apache.commons.validator.Field"
                    msg="必须是正数"/>
         <validator name="long"
-                   classname="com.github.app.spi.utils.GenericValidatorImpl"
+                   classname="com.github.app.spi.validator.GenericValidatorImpl"
                    method="validateLong"
                    methodParams="java.lang.Object, org.apache.commons.validator.Field"
                    msg="必须是long类型"/>
-        <validator name="float"
-                   classname="com.github.app.spi.utils.GenericValidatorImpl"
-                   method="validateFloat"
-                   methodParams="java.lang.Object, org.apache.commons.validator.Field"
-                   msg="必须是float类型"/>
         <validator name="double"
-                   classname="com.github.app.spi.utils.GenericValidatorImpl"
+                   classname="com.github.app.spi.validator.GenericValidatorImpl"
                    method="validateDouble"
                    methodParams="java.lang.Object, org.apache.commons.validator.Field"
                    msg="必须是double类型"/>
-
+        <validator name="url"
+                   classname="com.github.app.spi.validator.GenericValidatorImpl"
+                   method="validateUrl"
+                   methodParams="java.lang.Object, org.apache.commons.validator.Field"
+                   msg="不是合法的url地址"/>
+        <validator name="mobile"
+                   classname="com.github.app.spi.validator.GenericValidatorImpl"
+                   method="validateMobile"
+                   methodParams="java.lang.Object, org.apache.commons.validator.Field"
+                   msg="手机号格式不正确"/>
+        <validator name="date"
+                   classname="com.github.app.spi.validator.GenericValidatorImpl"
+                   method="validateDate"
+                   methodParams="java.lang.Object, org.apache.commons.validator.Field"
+                   msg="日期格式不正确"/>
+        <validator name="stringLength"
+                   classname="com.github.app.spi.validator.GenericValidatorImpl"
+                   method="validateStringLength"
+                   methodParams="java.lang.Object, org.apache.commons.validator.Field"
+                   msg="日期格式不正确"/>
+        <validator name="regex"
+                   classname="com.github.app.spi.validator.GenericValidatorImpl"
+                   method="validateRegex"
+                   methodParams="java.lang.Object, org.apache.commons.validator.Field"
+                   msg="参数格式不符"/>
     </global>
     <formset>
-        <form name="genericForm">
+        <form name="interceptorForm">
             <field property="email" depends="email"/>
+            <field property="mobile" depends="mobile"/>
+            <field property="telephone" depends="mobile"/>
+            <field property="account" depends="regex">
+                <var>
+                    <var-name>regex</var-name>
+                    <var-value>^[a-zA-Z0-9@.]+$</var-value>
+                </var>
+            </field>
         </form>
     </formset>
 </form-validation>

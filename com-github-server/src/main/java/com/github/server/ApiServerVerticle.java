@@ -14,6 +14,7 @@ import com.github.app.spi.handler.common.FailureHandler;
 import com.github.app.spi.handler.common.WelcomHandler;
 import com.github.app.spi.handler.interceptor.AuthInterceptor;
 import com.github.app.spi.plugin.ApiMetricTimeMeterHandler;
+import com.github.app.spi.plugin.ValidatorInterceptor;
 import com.github.app.spi.services.DBAutoInit;
 import com.github.app.spi.utils.PopedomContext;
 import com.github.app.utils.ServerEnvConstant;
@@ -122,6 +123,7 @@ public class ApiServerVerticle extends AbstractVerticle {
         rootRouter.route().handler(TimeoutHandler.create(8000));
         rootRouter.route().pathRegex("^(?!/static).*").handler(ResponseTimeHandler.create());
         rootRouter.route().pathRegex("^(?!/static).*").handler(ApiMetricTimeMeterHandler.create());
+        rootRouter.route().pathRegex("^(?!/static).*").handler(ValidatorInterceptor.create());
         rootRouter.route().pathRegex("^(?!/static).*").handler(ResponseContentTypeHandler.create());
         rootRouter.route().pathRegex("^(?!/static).*").handler(BodyHandler.create());
 

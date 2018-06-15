@@ -110,7 +110,7 @@ public class JWTIssueHandler implements OpenUriHandler {
             return;
         }
 
-        JsonObject jsonObject = new JsonObject(routingContext.getBodyAsString());
+        JsonObject jsonObject = mapTo(routingContext, JsonObject.class);
 
         String account = jsonObject.getString("account");
         String password = jsonObject.getString("password");

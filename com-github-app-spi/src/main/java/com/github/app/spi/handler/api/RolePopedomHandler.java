@@ -56,7 +56,7 @@ public class RolePopedomHandler implements AuthUriHandler {
     }
 
     public void saveOrUpdate(RoutingContext routingContext) {
-        Role role = mapTo(routingContext.getBody(), Role.class);
+        Role role = mapTo(routingContext, Role.class);
         if (StringUtils.isEmpty(role.getName())) {
             responseOperationFailed(routingContext, "name must be filled");
             return;
@@ -112,9 +112,7 @@ public class RolePopedomHandler implements AuthUriHandler {
     }
 
     public void saveRolePopedom(RoutingContext routingContext) {
-        String json = routingContext.getBodyAsString();
-
-        List<RolePopedom> list = JacksonUtils.deserialize(json, new TypeReference<List<RolePopedom>>(){});
+        List<RolePopedom> list = mapTo(routingContext, new TypeReference<List<RolePopedom>>(){});
 
         if(list.get(0).getRoleId() == 1) {
             responseOperationFailed(routingContext, "超级管理员权限不允许编辑");

@@ -62,7 +62,7 @@ public class AccountHandler implements AuthUriHandler {
     }
 
     public void enable(RoutingContext routingContext) {
-        Account account = mapTo(routingContext.getBody(), Account.class);
+        Account account = mapTo(routingContext, Account.class);
 
         if (account.getAccountId() == 1) {
             responseOperationFailed(routingContext, "超级管理员帐号不允许禁用");
@@ -74,7 +74,7 @@ public class AccountHandler implements AuthUriHandler {
     }
 
     public void save(RoutingContext routingContext) {
-        Account account = mapTo(routingContext.getBody(), Account.class);
+        Account account = mapTo(routingContext, Account.class);
 
         if (StringUtils.isEmpty(account.getAccount())) {
             responseOperationFailed(routingContext, "帐号不能为空");
@@ -94,7 +94,7 @@ public class AccountHandler implements AuthUriHandler {
      * 不允许修改账号密码状态角色信息
      */
     public void update(RoutingContext routingContext) {
-        Account account = mapTo(routingContext.getBody(), Account.class);
+        Account account = mapTo(routingContext, Account.class);
 
         if (StringUtils.isEmpty(account.getAccount())) {
             responseOperationFailed(routingContext, "帐号不能为空");
@@ -201,7 +201,7 @@ public class AccountHandler implements AuthUriHandler {
     }
 
     public void editPassword(RoutingContext routingContext) {
-        JsonObject jsonObject = routingContext.getBodyAsJson();
+        JsonObject jsonObject = mapTo(routingContext, JsonObject.class);
 
         if (!jsonObject.containsKey("oldPwd")) {
             responseOperationFailed(routingContext, "oldPwd参数缺失");
@@ -262,9 +262,7 @@ public class AccountHandler implements AuthUriHandler {
 
         List<Session> list = new ArrayList<>();
         LocalMap<String, Session> localMap = routingContext.vertx().sharedData().getLocalMap(SessionConstant.SESSION_STORE_MAP);
-        localMap.forEach((k, v) -> {
-            list.add(v);
-        });
+        localMap.forEach((k, v) -> list.add(v));
 
         list.sort((o1, o2) -> (int) (o2.lastAccessed() - o1.lastAccessed()));
 

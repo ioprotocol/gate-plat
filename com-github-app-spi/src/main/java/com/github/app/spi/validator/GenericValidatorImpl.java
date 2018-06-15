@@ -1,9 +1,9 @@
-package com.github.app.spi.utils;
+package com.github.app.spi.validator;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.Field;
 import org.apache.commons.validator.GenericTypeValidator;
 import org.apache.commons.validator.GenericValidator;
-import org.apache.commons.validator.ValidatorException;
 import org.apache.commons.validator.util.ValidatorUtils;
 
 /**
@@ -145,9 +145,78 @@ public class GenericValidatorImpl {
         return GenericValidator.isEmail(value);
     }
 
-    public static boolean validateText(Object bean, Field field) {
+    /**
+     *
+     * @param bean
+     * @param field
+     * @return
+     */
+    public static boolean validateRegex(Object bean, Field field) {
         String value = ValidatorUtils.getValueAsString(bean, field.getProperty());
-        return false;
+        return GenericValidator.matchRegexp(value, field.getVarValue("regex"));
     }
 
+    /**
+     *
+     * @param bean
+     * @param field
+     * @return
+     */
+    public static boolean validateUrl(Object bean, Field field) {
+        String value = ValidatorUtils.getValueAsString(bean, field.getProperty());
+        return GenericValidator.isUrl(value);
+    }
+
+    /**
+     *
+     * @param bean
+     * @param field
+     * @return
+     */
+    public static boolean validateMobile(Object bean, Field field) {
+        String value = ValidatorUtils.getValueAsString(bean, field.getProperty());
+        return MobileValidator.getInstance().isValid(value);
+    }
+    /**
+     *
+     * @param bean
+     * @param field
+     * @return
+     */
+    public static boolean validateNumberRange(Object bean, Field field) {
+        String value = ValidatorUtils.getValueAsString(bean, field.getProperty());
+        String varMax = field.getVarValue("max");
+        String varMin = field.getVarValue("min");
+
+        if (StringUtils.isEmpty(varMax)) {
+            return GenericValidator.minValue(Integer.parseInt(value), Integer.parseInt(varMin));
+        }
+
+        if (StringUtils.isEmpty(varMin)) {
+            return GenericValidator.maxValue(Integer.parseInt(value), Integer.parseInt(varMax));
+        }
+
+        return GenericValidator.isInRange(Integer.valueOf(value), Integer.parseInt(varMin), Integer.parseInt(varMax));
+    }
+
+    public static boolean validateDate(Object bean, Field field) {
+        String value = ValidatorUtils.getValueAsString(bean, field.getProperty());
+        String pattern = field.getVarValue("pattern");
+        return GenericValidator.isDate(value, pattern, true);
+    }
+
+    public static boolean validateStringLength(Object bean, Field field) {
+        String value = ValidatorUtils.getValueAsString(bean, field.getProperty());
+        String varMax = field.getVarValue("max");
+        String varMin = field.getVarValue("min");
+        if (StringUtils.isEmpty(varMax)) {
+            return GenericValidator.minLength(value, Integer.parseInt(varMin));
+        }
+
+        if (StringUtils.isEmpty(varMin)) {
+            return GenericValidator.minLength(value, Integer.parseInt(varMax));
+        }
+        return GenericValidator.minLength(value, Integer.parseInt(varMin))
+                && GenericValidator.minLength(value, Integer.parseInt(varMax));
+    }
 }

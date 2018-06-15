@@ -164,23 +164,21 @@ public interface UriHandler {
     /**
      * 更为节省内存的序列化方法
      *
-     * @param buffer
      * @param cls
      * @param <T>
      * @return
      */
-    default <T> T mapTo(Buffer buffer, Class<T> cls) {
-        return JacksonUtils.deserialize(buffer.getByteBuf(), cls);
+    default <T> T mapTo(RoutingContext routingContext, Class<T> cls) {
+        return JacksonUtils.deserialize(routingContext.getBody().getByteBuf(), cls);
     }
 
     /**
      *
-     * @param buffer
      * @param reference
      * @param <T>
      * @return
      */
-    default <T> T mapTo(Buffer buffer, TypeReference<T> reference) {
-        return JacksonUtils.deserialize(buffer.getByteBuf(), reference);
+    default <T> T mapTo(RoutingContext routingContext, TypeReference<T> reference) {
+        return JacksonUtils.deserialize(routingContext.getBody().getByteBuf(), reference);
     }
 }

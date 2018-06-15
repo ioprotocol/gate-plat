@@ -3,6 +3,7 @@ package com.github.app.utils;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -17,7 +18,10 @@ import java.io.DataInput;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
+import java.util.Map;
 
 import static java.time.format.DateTimeFormatter.ISO_INSTANT;
 
@@ -38,7 +42,9 @@ public final class JacksonUtils {
         SimpleModule module = new SimpleModule();
         // custom types
         module.addSerializer(JsonObject.class, new JsonObjectSerializer());
+        module.addDeserializer(JsonObject.class, new JsonObjectDeserializer());
         module.addSerializer(JsonArray.class, new JsonArraySerializer());
+        module.addDeserializer(JsonArray.class, new JsonArrayDeserializer());
         // he have 2 extensions: RFC-7493
         module.addSerializer(Instant.class, new InstantSerializer());
         module.addSerializer(byte[].class, new ByteArraySerializer());
@@ -56,10 +62,26 @@ public final class JacksonUtils {
         }
     }
 
+    private static class JsonObjectDeserializer extends JsonDeserializer<JsonObject> {
+
+        @Override
+        public JsonObject deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+            return new JsonObject(p.getCodec().readValue(p, Map.class));
+        }
+    }
+
     private static class JsonArraySerializer extends JsonSerializer<JsonArray> {
         @Override
         public void serialize(JsonArray value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
             jgen.writeObject(value.getList());
+        }
+    }
+
+    private static class JsonArrayDeserializer extends JsonDeserializer<JsonArray> {
+
+        @Override
+        public JsonArray deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+            return new JsonArray(p.getCodec().readValue(p, List.class));
         }
     }
 

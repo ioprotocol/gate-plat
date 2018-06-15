@@ -22,8 +22,8 @@ public class AppServerConfigLoader {
         try {
             String path = ServerEnvConstant.getAppServerCfgFilePath();
             Properties properties = new Properties();
-            BufferedReader bf = new BufferedReader(new InputStreamReader(new FileInputStream(path),"UTF-8"));
-            properties.load(bf);
+//            BufferedReader bf = new BufferedReader(new InputStreamReader(new FileInputStream(path),"UTF-8"));
+            properties.load(new FileInputStream(path));
             sysConfig = new AppServerConfig();
             FieldParser.update((Map) properties, sysConfig);
             return sysConfig;

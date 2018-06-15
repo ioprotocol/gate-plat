@@ -1,17 +1,15 @@
-package com.github.app.spi.utils;
+package com.github.app.spi.validator;
 
 import org.apache.commons.validator.*;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class ValidatorTest {
     private ValidatorResources validatorResources;
-    private static final String FORM = "genericForm";
+    private static final String FORM = "interceptorForm";
 
     public ValidatorTest() {
         try {
@@ -26,16 +24,16 @@ public class ValidatorTest {
     public void testEmail() throws ValidatorException {
         Map<String, Object> values = new HashMap<>();
         values.put("email", "xsy@123.com");
+        values.put("account", "abcd.@com");
 
         Validator validator = new Validator(validatorResources, FORM);
         validator.setParameter(Validator.BEAN_PARAM, values);
         ValidatorResults results = validator.validate();
-        ValidatorResult result = results.getValidatorResult("email");
+        ValidatorResult result1 = results.getValidatorResult("email");
+        ValidatorResult result2 = results.getValidatorResult("account");
 
-        System.out.println(result.getResult("email"));
-        Set<String> actions = validatorResources.getValidatorActions().keySet();
-        System.out.println(Arrays.toString(actions.toArray()));
-        System.out.println(validatorResources.getValidatorAction("email").getMsg());
+        System.out.println(result1.getResult("email"));
+        System.out.println(result2.getResult("regex"));
     }
 
     public static void main(String[] args) throws ValidatorException {
