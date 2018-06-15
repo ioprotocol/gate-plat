@@ -68,7 +68,11 @@ public class SpringApplication {
 
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         try {
-            Resource[] resources = new Resource[]{resolver.getResources("classpath:mapper-spi/*.xml"), resolver.getResources("classpath:mapper-api/*.xml")};
+            Resource[] resources1 = resolver.getResources("classpath:mapper-spi/*.xml");
+            Resource[] resources2 = resolver.getResources("classpath:mapper-api/*.xml");
+            Resource[] resources = new Resource[resources1.length + resources2.length];
+            System.arraycopy(resources1, 0, resources, 0, resources1.length);
+            System.arraycopy(resources2, 0, resources, resources1.length, resources2.length);
             bean.setMapperLocations(resources);
             return bean.getObject();
         } catch (Exception e) {
