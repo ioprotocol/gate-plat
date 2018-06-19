@@ -25,15 +25,19 @@ public class ValidatorTest {
         Map<String, Object> values = new HashMap<>();
         values.put("email", "xsy@123.com");
         values.put("account", "abcd.@com");
+        values.put("test", "abcd.@com");
 
         Validator validator = new Validator(validatorResources, FORM);
         validator.setParameter(Validator.BEAN_PARAM, values);
         ValidatorResults results = validator.validate();
         ValidatorResult result1 = results.getValidatorResult("email");
         ValidatorResult result2 = results.getValidatorResult("account");
+        ValidatorResult result3 = results.getValidatorResult("test");
 
         System.out.println(result1.getResult("email"));
         System.out.println(result2.getResult("regex"));
+        System.out.println(result2.isValid("regex"));
+        System.out.println(result3 == null);
     }
 
     public static void main(String[] args) throws ValidatorException {

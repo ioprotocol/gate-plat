@@ -123,9 +123,9 @@ public class ApiServerVerticle extends AbstractVerticle {
         rootRouter.route().handler(TimeoutHandler.create(8000));
         rootRouter.route().pathRegex("^(?!/static).*").handler(ResponseTimeHandler.create());
         rootRouter.route().pathRegex("^(?!/static).*").handler(ApiMetricTimeMeterHandler.create());
-        rootRouter.route().pathRegex("^(?!/static).*").handler(ValidatorInterceptor.create());
         rootRouter.route().pathRegex("^(?!/static).*").handler(ResponseContentTypeHandler.create());
         rootRouter.route().pathRegex("^(?!/static).*").handler(BodyHandler.create());
+        rootRouter.route().pathRegex("^(?!/static).*").handler(ValidatorInterceptor.create());
 
         loadHandlers(rootRouter, WelcomHandler.class);
         loadHandlers(rootRouter, FailureHandler.class);

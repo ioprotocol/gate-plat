@@ -83,14 +83,21 @@
     </global>
     <formset>
         <form name="interceptorForm">
-            <field property="email" depends="email"/>
-            <field property="mobile" depends="mobile"/>
-            <field property="telephone" depends="mobile"/>
+            <field property="email" depends="email">
+                <msg key="email" name="email" bundle="邮箱格式不正确"/>
+            </field>
+            <field property="mobile" depends="mobile">
+                <msg key="mobile" name="mobile" bundle="电话号码格式不正确"/>
+            </field>
+            <field property="telephone" depends="mobile">
+                <msg key="telephone" name="telephone" bundle="电话号码格式不正确"/>
+            </field>
             <field property="account" depends="regex">
                 <var>
                     <var-name>regex</var-name>
                     <var-value>^[a-zA-Z0-9@.]+$</var-value>
                 </var>
+                <msg key="account" name="account" bundle="帐号必须又字母数字.@组成"/>
             </field>
         </form>
     </formset>
