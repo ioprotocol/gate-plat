@@ -14,8 +14,8 @@ public class DelimiterBasedFrameDecoder extends ByteToMessageDecoder {
     private static final int DEFAULT_MAX_BYTES_IN_MESSAGE = 8092;
 
     private final int maxBytesInMessage;
-    private final ByteBuf headerDelimiter;
-    private final ByteBuf tailerDelimiter;
+    private final ByteBuf headerDelimiter = UnpooledByteBufAllocator.DEFAULT.buffer(4);
+    private final ByteBuf tailerDelimiter = UnpooledByteBufAllocator.DEFAULT.buffer(4);
     private final EscapCoder[] escapCoders;
 
     public DelimiterBasedFrameDecoder(String headerDelimiter, String tailerDelimiter, EscapCoder... escapCoders) {
@@ -24,8 +24,12 @@ public class DelimiterBasedFrameDecoder extends ByteToMessageDecoder {
 
     public DelimiterBasedFrameDecoder(byte[] headerDelimiter, byte[] tailerDelimiter, EscapCoder... escapCoders) {
         this.maxBytesInMessage = DEFAULT_MAX_BYTES_IN_MESSAGE;
-        this.headerDelimiter = UnpooledByteBufAllocator.DEFAULT.buffer(headerDelimiter.length).writeBytes(headerDelimiter);
-        this.tailerDelimiter = UnpooledByteBufAllocator.DEFAULT.buffer(headerDelimiter.length).writeBytes(tailerDelimiter);
+        if (headerDelimiter != null) {
+            this.headerDelimiter.writeBytes(headerDelimiter);
+        }
+        if (tailerDelimiter != null) {
+            this.tailerDelimiter.writeBytes(tailerDelimiter);
+        }
         this.escapCoders = escapCoders;
     }
 
