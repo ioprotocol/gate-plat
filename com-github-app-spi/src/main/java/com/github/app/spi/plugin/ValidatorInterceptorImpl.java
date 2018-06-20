@@ -87,20 +87,22 @@ public class ValidatorInterceptorImpl implements ValidatorInterceptor, UriHandle
      */
     private boolean processSqlEscapeAndValidate(MultiMap multiMap, RoutingContext routingContext) {
         Iterator<Map.Entry<String, String>> it = multiMap.iterator();
-        validator.setParameter(Validator.BEAN_PARAM, multiMap);
         try {
-            ValidatorResults results = validator.validate();
-            while (it.hasNext()) {
-                Map.Entry<String, String> entry = it.next();
-                entry.setValue(ValidatorInterceptor.escape(entry.getValue()));
+            if(multiMap != null && multiMap.size() > 0) {
+                validator.setParameter(Validator.BEAN_PARAM, multiMap);
+                ValidatorResults results = validator.validate();
+                while (it.hasNext()) {
+                    Map.Entry<String, String> entry = it.next();
+                    entry.setValue(ValidatorInterceptor.escape(entry.getValue()));
 
-                ValidatorResult validatorResult = results.getValidatorResult(entry.getKey());
-                if (validatorResult != null) {
-                    List<String> dependencyList = validatorResult.getField().getDependencyList();
-                    for (String dep : dependencyList) {
-                        if (!validatorResult.isValid(dep)) {
-                            responseOperationFailed(routingContext, validatorResult.getField().getMessage(entry.getKey()).getBundle());
-                            return false;
+                    ValidatorResult validatorResult = results.getValidatorResult(entry.getKey());
+                    if (validatorResult != null) {
+                        List<String> dependencyList = validatorResult.getField().getDependencyList();
+                        for (String dep : dependencyList) {
+                            if (!validatorResult.isValid(dep)) {
+                                responseOperationFailed(routingContext, validatorResult.getField().getMessage(entry.getKey()).getBundle());
+                                return false;
+                            }
                         }
                     }
                 }
@@ -113,17 +115,19 @@ public class ValidatorInterceptorImpl implements ValidatorInterceptor, UriHandle
 
     private boolean processBodyObjectValidator(Map<String, Object> map, RoutingContext routingContext) {
         Set<Map.Entry<String, Object>> it = map.entrySet();
-        validator.setParameter(Validator.BEAN_PARAM, map);
         try {
-            ValidatorResults results = validator.validate();
-            for (Map.Entry<String, Object> entry : it) {
-                ValidatorResult validatorResult = results.getValidatorResult(entry.getKey());
-                if (validatorResult != null) {
-                    List<String> dependencyList = validatorResult.getField().getDependencyList();
-                    for (String dep : dependencyList) {
-                        if (!validatorResult.isValid(dep)) {
-                            responseOperationFailed(routingContext, validatorResult.getField().getMessage(entry.getKey()).getBundle());
-                            return false;
+            if(map != null && map.size() > 0) {
+                validator.setParameter(Validator.BEAN_PARAM, map);
+                ValidatorResults results = validator.validate();
+                for (Map.Entry<String, Object> entry : it) {
+                    ValidatorResult validatorResult = results.getValidatorResult(entry.getKey());
+                    if (validatorResult != null) {
+                        List<String> dependencyList = validatorResult.getField().getDependencyList();
+                        for (String dep : dependencyList) {
+                            if (!validatorResult.isValid(dep)) {
+                                responseOperationFailed(routingContext, validatorResult.getField().getMessage(entry.getKey()).getBundle());
+                                return false;
+                            }
                         }
                     }
                 }
