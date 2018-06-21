@@ -6,5 +6,6 @@ target
 *.tar.gz
 *.db
 *.log.gz
+web
 com-github-app-ui/node_modules/*
 node_modules
