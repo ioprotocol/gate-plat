@@ -13,22 +13,22 @@ import org.apache.logging.log4j.Logger;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ValidatorInterceptorImpl implements ValidatorInterceptor, UriHandler {
     private static final Logger logger = LogManager.getLogger(ValidatorInterceptorImpl.class);
-
-    private Validator validator;
+    private static final String INTERCEPTOR_FORM = "interceptorForm";
     private ValidatorResources validatorResources;
+    private Map<String, Validator> validatorMap = new ConcurrentHashMap<>();
 
     public ValidatorInterceptorImpl() {
         try {
             validatorResources = new ValidatorResources(ValidatorInterceptorImpl.class.getResourceAsStream("/validator.xml"));
-            validator = new Validator(validatorResources, "interceptorForm");
-
+            List<Field> list = validatorResources.getForm(Locale.CHINA, INTERCEPTOR_FORM).getFields();
+            for (Field field : list) {
+                validatorMap.put(field.getKey(), new Validator(validatorResources, INTERCEPTOR_FORM, field.getKey()));
+            }
         } catch (IOException e) {
             e.printStackTrace();
         } catch (SAXException e) {
@@ -89,19 +89,23 @@ public class ValidatorInterceptorImpl implements ValidatorInterceptor, UriHandle
         Iterator<Map.Entry<String, String>> it = multiMap.iterator();
         try {
             if(multiMap != null && multiMap.size() > 0) {
-                validator.setParameter(Validator.BEAN_PARAM, multiMap);
-                ValidatorResults results = validator.validate();
+
                 while (it.hasNext()) {
                     Map.Entry<String, String> entry = it.next();
                     entry.setValue(ValidatorInterceptor.escape(entry.getValue()));
 
-                    ValidatorResult validatorResult = results.getValidatorResult(entry.getKey());
-                    if (validatorResult != null) {
-                        List<String> dependencyList = validatorResult.getField().getDependencyList();
-                        for (String dep : dependencyList) {
-                            if (!validatorResult.isValid(dep)) {
-                                responseOperationFailed(routingContext, validatorResult.getField().getMessage(entry.getKey()).getBundle());
-                                return false;
+                    Validator validator = validatorMap.get(entry.getKey());
+                    if (validator != null) {
+                        validator.setParameter(Validator.BEAN_PARAM, multiMap);
+                        ValidatorResults results = validator.validate();
+                        ValidatorResult validatorResult = results.getValidatorResult(entry.getKey());
+                        if (validatorResult != null) {
+                            List<String> dependencyList = validatorResult.getField().getDependencyList();
+                            for (String dep : dependencyList) {
+                                if (!validatorResult.isValid(dep)) {
+                                    responseOperationFailed(routingContext, validatorResult.getField().getMessage(entry.getKey()).getBundle());
+                                    return false;
+                                }
                             }
                         }
                     }
@@ -117,16 +121,19 @@ public class ValidatorInterceptorImpl implements ValidatorInterceptor, UriHandle
         Set<Map.Entry<String, Object>> it = map.entrySet();
         try {
             if(map != null && map.size() > 0) {
-                validator.setParameter(Validator.BEAN_PARAM, map);
-                ValidatorResults results = validator.validate();
                 for (Map.Entry<String, Object> entry : it) {
-                    ValidatorResult validatorResult = results.getValidatorResult(entry.getKey());
-                    if (validatorResult != null) {
-                        List<String> dependencyList = validatorResult.getField().getDependencyList();
-                        for (String dep : dependencyList) {
-                            if (!validatorResult.isValid(dep)) {
-                                responseOperationFailed(routingContext, validatorResult.getField().getMessage(entry.getKey()).getBundle());
-                                return false;
+                    Validator validator = validatorMap.get(entry.getKey());
+                    if (validator != null) {
+                        validator.setParameter(Validator.BEAN_PARAM, map);
+                        ValidatorResults results = validator.validate();
+                        ValidatorResult validatorResult = results.getValidatorResult(entry.getKey());
+                        if (validatorResult != null) {
+                            List<String> dependencyList = validatorResult.getField().getDependencyList();
+                            for (String dep : dependencyList) {
+                                if (!validatorResult.isValid(dep)) {
+                                    responseOperationFailed(routingContext, validatorResult.getField().getMessage(entry.getKey()).getBundle());
+                                    return false;
+                                }
                             }
                         }
                     }

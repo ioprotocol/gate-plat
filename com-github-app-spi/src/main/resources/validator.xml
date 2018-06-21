@@ -97,7 +97,7 @@
                     <var-name>regex</var-name>
                     <var-value>^[a-zA-Z0-9@.]+$</var-value>
                 </var>
-                <msg key="account" name="account" bundle="帐号必须又字母数字.@组成"/>
+                <msg key="account" name="account" bundle="帐号必须由字母数字.@组成"/>
             </field>
         </form>
     </formset>

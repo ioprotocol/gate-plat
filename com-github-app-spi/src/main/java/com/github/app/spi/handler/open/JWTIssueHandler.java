@@ -14,6 +14,10 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.util.concurrent.RateLimiter;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufOutputStream;
+import io.netty.buffer.PooledByteBufAllocator;
+import io.netty.util.ReferenceCountUtil;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.auth.KeyStoreOptions;
@@ -84,14 +88,11 @@ public class JWTIssueHandler implements OpenUriHandler {
         String captchaCode = captchaFactory.next();
 
         try {
-            ByteArrayOutputStream os = new ByteArrayOutputStream();
-            cage.draw(captchaCode, os);
-
-            Buffer buffer = Buffer.buffer();
-            buffer.appendBytes(os.toByteArray());
-            os.close();
+            ByteBuf byteBuf = PooledByteBufAllocator.DEFAULT.buffer(4096);
+            cage.draw(captchaCode, new ByteBufOutputStream(byteBuf));
             routingContext.session().put(CAPTCHA_CODE, captchaCode);
-            routingContext.response().end(buffer);
+            routingContext.response().end(Buffer.buffer(byteBuf));
+            routingContext.response().bodyEndHandler(v -> ReferenceCountUtil.safeRelease(byteBuf));
         } catch (Exception e) {
             responseOperationFailed(routingContext, e);
         }

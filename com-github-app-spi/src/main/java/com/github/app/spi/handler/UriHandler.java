@@ -4,15 +4,17 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.app.spi.dao.domain.Popedom;
 import com.github.app.utils.JacksonUtils;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.PooledByteBufAllocator;
+import io.netty.util.ReferenceCountUtil;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.nio.charset.Charset;
 import java.util.List;
 
 import static com.github.app.spi.handler.JsonResponse.*;
@@ -65,8 +67,8 @@ public interface UriHandler {
     default void response(RoutingContext routingContext, Integer code, String msg, Object data) {
         JsonResponse response = JsonResponse.create(code, msg, data);
 
-        ByteBuf byteBuf = PooledByteBufAllocator.DEFAULT.buffer(512);
         try {
+            ByteBuf byteBuf = PooledByteBufAllocator.DEFAULT.buffer(512);
             JacksonUtils.serialize(response, byteBuf);
             if (logger.isInfoEnabled()) {
                 logger.info("\n{}:{} \nheader:{}\n params:{}\n body:{}\n response:{}\n\n",
@@ -79,6 +81,7 @@ public interface UriHandler {
             }
 
             routingContext.response().end(Buffer.buffer(byteBuf));
+            routingContext.response().bodyEndHandler(v -> ReferenceCountUtil.safeRelease(byteBuf));
         } finally {
             response.recycle();
         }
@@ -123,9 +126,10 @@ public interface UriHandler {
      * @param throwable
      */
     default void responseOperationFailed(RoutingContext routingContext, Throwable throwable) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        throwable.printStackTrace(new PrintStream(baos));
-        String exception = baos.toString();
+        ByteBuf byteBuf = PooledByteBufAllocator.DEFAULT.buffer(1024);
+        throwable.printStackTrace(new PrintStream(new ByteBufOutputStream(byteBuf)));
+        String exception = byteBuf.readCharSequence(byteBuf.readableBytes(), Charset.forName("utf-8")).toString();
+        ReferenceCountUtil.safeRelease(byteBuf);
         responseOperationFailed(routingContext, exception);
     }
 
