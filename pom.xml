@@ -18,6 +18,7 @@
         <module>distribution</module>
         <module>com-github-app-spi</module>
         <module>com-github-server</module>
+        <module>com-github-cache</module>
     </modules>
 
     <properties>
