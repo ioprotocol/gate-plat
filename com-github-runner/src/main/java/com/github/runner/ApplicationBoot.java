@@ -7,6 +7,8 @@ import com.github.app.spi.services.impl.SystemOperationServiceImpl;
 import com.github.app.spi.utils.AppServerConfigLoader;
 import com.github.app.utils.JacksonUtils;
 import com.github.app.utils.ServerEnvConstant;
+import com.github.server.ServerDaemonVerticle;
+import com.github.server.ZookeeperServerVerticle;
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
 import io.vertx.core.cli.CLI;
@@ -81,7 +83,35 @@ public class ApplicationBoot {
                         Vertx vertx = VertxFactory.vertx();
                         DeploymentOptions deploymentOptions = new DeploymentOptions();
                         deploymentOptions.setConfig(JsonObject.mapFrom(AppServerConfigLoader.getServerCfg()));
+
                         vertx.deployVerticle(ApiServerVerticle.class, deploymentOptions, ar -> {
+                            if (ar.succeeded()) {
+                            } else {
+                                vertx.close();
+                                System.exit(-2);
+                            }
+                        });
+                        break;
+                    }
+                    case ZK: {
+                        Vertx vertx = VertxFactory.vertx();
+                        DeploymentOptions deploymentOptions = new DeploymentOptions();
+                        deploymentOptions.setConfig(JsonObject.mapFrom(AppServerConfigLoader.getServerCfg()));
+                        vertx.deployVerticle(ZookeeperServerVerticle.class, deploymentOptions, ar -> {
+                            if (ar.succeeded()) {
+                            } else {
+                                vertx.close();
+                                System.exit(-2);
+                            }
+                        });
+                        break;
+                    }
+                    case DAEMON: {
+                        Vertx vertx = VertxFactory.vertx();
+                        DeploymentOptions deploymentOptions = new DeploymentOptions();
+                        deploymentOptions.setConfig(JsonObject.mapFrom(AppServerConfigLoader.getServerCfg()));
+
+                        vertx.deployVerticle(ServerDaemonVerticle.class, deploymentOptions, ar -> {
                             if (ar.succeeded()) {
                             } else {
                                 vertx.close();

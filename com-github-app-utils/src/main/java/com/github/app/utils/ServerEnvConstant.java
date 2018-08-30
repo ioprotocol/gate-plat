@@ -1,5 +1,7 @@
 package com.github.app.utils;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.io.File;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -11,6 +13,21 @@ public class ServerEnvConstant {
     public static final String APP_HOME = "VERTX_HOME";
     public static final String APP_LOG4J2_CFG_FILE = "VERTX_LOG4J2_CONFIG";
     public static final String APP_SERVER_CFG_FILE = "VERTX_SERVER_CONFIG";
+    public static final String APP_ZK_CFG_FILE = "VERTX_ZK_CONFIG";
+
+    /**
+     * 获取zk 配置文件的完整路径名
+     *
+     * @return
+     */
+    public static String getZkConfigFilePath() {
+        String path = getSystemEnv(APP_ZK_CFG_FILE);
+
+        if (StringUtils.isEmpty(path)) {
+            path = getAppServerHome() + File.separator + "config" + File.separator + "zookeeper.conf";
+        }
+        return path;
+    }
 
     /**
      * 获取log4j配置文件位置

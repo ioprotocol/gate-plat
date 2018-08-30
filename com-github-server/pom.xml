@@ -33,6 +33,11 @@
             <artifactId>com-github-gate-ruler</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.zkbooter</groupId>
+            <artifactId>com-github-zkbooter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
 </project>
