@@ -5,24 +5,23 @@ import io.netty.buffer.ByteBufUtil;
 import io.netty.buffer.UnpooledByteBufAllocator;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
-import io.netty.util.ReferenceCountUtil;
 
 /**
- * 基于分隔符的流式解码器
+ * 流式解码器
+ * 根据固定的分隔符来拆包
  */
-public class DelimiterBasedFrameDecoder extends ByteToMessageDecoder {
+public class DelimiterDecoder extends ByteToMessageDecoder {
     private static final int DEFAULT_MAX_BYTES_IN_MESSAGE = 8092;
 
     private final int maxBytesInMessage;
     private final ByteBuf headerDelimiter = UnpooledByteBufAllocator.DEFAULT.buffer(4);
     private final ByteBuf tailerDelimiter = UnpooledByteBufAllocator.DEFAULT.buffer(4);
-    private final EscapCoder[] escapCoders;
 
-    public DelimiterBasedFrameDecoder(String headerDelimiter, String tailerDelimiter, EscapCoder... escapCoders) {
-        this(ByteBufUtil.decodeHexDump(headerDelimiter), ByteBufUtil.decodeHexDump(tailerDelimiter), escapCoders);
+    public DelimiterDecoder(String headerDelimiter, String tailerDelimiter) {
+        this(ByteBufUtil.decodeHexDump(headerDelimiter), ByteBufUtil.decodeHexDump(tailerDelimiter));
     }
 
-    public DelimiterBasedFrameDecoder(byte[] headerDelimiter, byte[] tailerDelimiter, EscapCoder... escapCoders) {
+    public DelimiterDecoder(byte[] headerDelimiter, byte[] tailerDelimiter) {
         this.maxBytesInMessage = DEFAULT_MAX_BYTES_IN_MESSAGE;
         if (headerDelimiter != null) {
             this.headerDelimiter.writeBytes(headerDelimiter);
@@ -30,11 +29,18 @@ public class DelimiterBasedFrameDecoder extends ByteToMessageDecoder {
         if (tailerDelimiter != null) {
             this.tailerDelimiter.writeBytes(tailerDelimiter);
         }
-        this.escapCoders = escapCoders;
     }
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf buffer, java.util.List<Object> out) {
+        if (buffer.readableBytes() < headerDelimiter.readableBytes()) {
+            return;
+        }
+
+        if (buffer.readableBytes() < tailerDelimiter.readableBytes()) {
+            return;
+        }
+
         int startIndex = ByteBufUtil.indexOf(headerDelimiter, buffer);
         if (startIndex == -1) {
             buffer.skipBytes(buffer.readableBytes());
@@ -49,20 +55,22 @@ public class DelimiterBasedFrameDecoder extends ByteToMessageDecoder {
         }
 
         while (startIndex != -1) {
-            ByteBuf msg = buffer.readRetainedSlice(endIndex - startIndex + tailerDelimiter.readableBytes());
+            buffer.skipBytes(headerDelimiter.readableBytes());
+            ByteBuf msg = buffer.readRetainedSlice(endIndex - startIndex - headerDelimiter.readableBytes());
+            buffer.skipBytes(tailerDelimiter.readableBytes());
 
-            if (escapCoders != null) {
-                for (EscapCoder coder : escapCoders) {
-                    ByteBuf outBuf = ctx.alloc().buffer(msg.readableBytes());
-                    coder.decode(msg, outBuf, headerDelimiter.readableBytes(), tailerDelimiter.readableBytes());
-                    ReferenceCountUtil.safeRelease(msg);
-                    msg = outBuf;
-                }
-            }
             out.add(msg);
 
             if (!buffer.isReadable()) {
                 break;
+            }
+
+            if (buffer.readableBytes() < headerDelimiter.readableBytes()) {
+                return;
+            }
+
+            if (buffer.readableBytes() < tailerDelimiter.readableBytes()) {
+                return;
             }
 
             startIndex = ByteBufUtil.indexOf(headerDelimiter, buffer);

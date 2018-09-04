@@ -3,56 +3,55 @@ package com.github.gate.coder;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.buffer.UnpooledByteBufAllocator;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.MessageToMessageCodec;
 
-public class EscapCoder {
-    private ByteBuf src = UnpooledByteBufAllocator.DEFAULT.buffer(2);
-    private ByteBuf dest = UnpooledByteBufAllocator.DEFAULT.buffer(4);
+import java.util.List;
+
+/**
+ * 转义编解码
+ */
+public class EscapCoder extends MessageToMessageCodec<ByteBuf, ByteBuf> {
+    private ByteBuf raw = UnpooledByteBufAllocator.DEFAULT.buffer(2);
+    private ByteBuf escap = UnpooledByteBufAllocator.DEFAULT.buffer(4);
 
     public EscapCoder(byte[] src, byte[] dest) {
-        this.src.writeBytes(src);
-        this.dest.writeBytes(dest);
+        this.raw.writeBytes(src);
+        this.escap.writeBytes(dest);
     }
 
     public EscapCoder(String src, String dest) {
-        this.src.writeBytes(ByteBufUtil.decodeHexDump(src));
-        this.dest.writeBytes(ByteBufUtil.decodeHexDump(dest));
+        this.raw.writeBytes(ByteBufUtil.decodeHexDump(src));
+        this.escap.writeBytes(ByteBufUtil.decodeHexDump(dest));
     }
 
-    public ByteBuf decode(ByteBuf in, ByteBuf out, int headerSize, int tailerSize) {
-        if (headerSize > 0) {
-            out.writeBytes(in, in.readerIndex(), headerSize);
-            in.skipBytes(headerSize);
+    @Override
+    protected void encode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) throws Exception {
+        ByteBuf outMsg = ctx.alloc().buffer(msg.readableBytes() * 2);
+        int index = ByteBufUtil.indexOf(raw, msg);
+        while (index != -1) {
+            outMsg.writeBytes(msg, msg.readerIndex(), index - msg.readerIndex());
+            outMsg.writeBytes(escap, escap.readerIndex(), escap.readableBytes());
+            msg.skipBytes(index - msg.readerIndex());
+            msg.skipBytes(raw.readableBytes());
+            index = ByteBufUtil.indexOf(raw, msg);
         }
-
-        int index = ByteBufUtil.indexOf(dest, in);
-        while (index != -1 && in.isReadable() && index != in.writerIndex() - tailerSize) {
-            out.writeBytes(in, in.readerIndex(), index - in.readerIndex());
-            in.skipBytes(index - in.readerIndex() + dest.readableBytes());
-            out.writeBytes(src, src.readerIndex(), src.readableBytes());
-            index = ByteBufUtil.indexOf(dest, in);
-        }
-
-        out.writeBytes(in, in.readerIndex(), in.readableBytes());
-
-        return out;
+        outMsg.writeBytes(msg);
+        out.add(outMsg);
     }
 
-    public ByteBuf encode(ByteBuf in, ByteBuf out, int headerSize, int tailerSize) {
-        if (headerSize > 0) {
-            out.writeBytes(in, in.readerIndex(), headerSize);
-            in.skipBytes(headerSize);
+    @Override
+    protected void decode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) throws Exception {
+        ByteBuf outMsg = ctx.alloc().buffer(msg.readableBytes());
+        int index = ByteBufUtil.indexOf(escap, msg);
+        while (index != -1) {
+            outMsg.writeBytes(msg, msg.readerIndex(), index - msg.readerIndex());
+            outMsg.writeBytes(raw, raw.readerIndex(), raw.readableBytes());
+            msg.skipBytes(index - msg.readerIndex());
+            msg.skipBytes(escap.readableBytes());
+            index = ByteBufUtil.indexOf(escap, msg);
         }
-
-        int index = ByteBufUtil.indexOf(src, in);
-        while (index != -1 && in.isReadable() && index != in.writerIndex() - tailerSize) {
-            out.writeBytes(in, in.readerIndex(), index - in.readerIndex());
-            in.skipBytes(index - in.readerIndex() + src.readableBytes());
-            out.writeBytes(dest, dest.readerIndex(), dest.readableBytes());
-            index = ByteBufUtil.indexOf(src, in);
-        }
-
-        out.writeBytes(in, in.readerIndex(), in.readableBytes());
-
-        return out;
+        outMsg.writeBytes(msg);
+        out.add(outMsg);
     }
 }
