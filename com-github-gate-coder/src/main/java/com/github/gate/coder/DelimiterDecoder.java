@@ -55,7 +55,7 @@ public class DelimiterDecoder extends ByteToMessageDecoder {
         }
 
         while (startIndex != -1) {
-            buffer.skipBytes(headerDelimiter.readableBytes());
+            buffer.readerIndex(startIndex);
             ByteBuf msg = buffer.readRetainedSlice(endIndex - startIndex - headerDelimiter.readableBytes());
             buffer.skipBytes(tailerDelimiter.readableBytes());
 
