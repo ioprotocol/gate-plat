@@ -1,5 +1,6 @@
 package com.github.server;
 
+import com.github.app.utils.JacksonUtils;
 import com.github.gate.coder.DelimiterDecoder;
 import com.github.gate.coder.DelimiterEncoder;
 import io.netty.buffer.ByteBuf;
@@ -48,8 +49,8 @@ public class TcpGateServerVerticle extends AbstractVerticle {
 	protected void clientConnected(NetSocket socket) {
 		NetSocketInternal netSocketInternal = (NetSocketInternal) socket;
 		ChannelPipeline pipeline = netSocketInternal.channelHandlerContext().pipeline();
-		pipeline.addBefore("hander", "delimiterEncoder", new DelimiterEncoder("2323", "2323"));
-		pipeline.addBefore("hander", "delimiterDecoder", new DelimiterDecoder("2323", "2323"));
+		pipeline.addBefore("handler", "delimiterEncoder", new DelimiterEncoder("2323", "2323"));
+		pipeline.addBefore("handler", "delimiterDecoder", new DelimiterDecoder("2323", "2323"));
 		netSocketInternal.messageHandler(this::messageHandler);
 	}
 

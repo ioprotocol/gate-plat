@@ -6,6 +6,8 @@ import io.netty.buffer.UnpooledByteBufAllocator;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 
+import java.util.Arrays;
+
 /**
  * 流式解码器
  * 根据固定的分隔符来拆包
@@ -16,6 +18,7 @@ public class DelimiterDecoder extends ByteToMessageDecoder {
     private final int maxBytesInMessage;
     private final ByteBuf headerDelimiter = UnpooledByteBufAllocator.DEFAULT.buffer(4);
     private final ByteBuf tailerDelimiter = UnpooledByteBufAllocator.DEFAULT.buffer(4);
+    private final boolean isSame;
 
     public DelimiterDecoder(String headerDelimiter, String tailerDelimiter) {
         this(ByteBufUtil.decodeHexDump(headerDelimiter), ByteBufUtil.decodeHexDump(tailerDelimiter));
@@ -28,6 +31,11 @@ public class DelimiterDecoder extends ByteToMessageDecoder {
         }
         if (tailerDelimiter != null) {
             this.tailerDelimiter.writeBytes(tailerDelimiter);
+        }
+        if (Arrays.equals(headerDelimiter, tailerDelimiter)) {
+            isSame = true;
+        } else {
+            isSame = false;
         }
     }
 
@@ -47,15 +55,24 @@ public class DelimiterDecoder extends ByteToMessageDecoder {
             return;
         }
         buffer.readerIndex(startIndex);
+        if (isSame) {
+            buffer.markReaderIndex();
+            buffer.skipBytes(headerDelimiter.readableBytes());
+        }
 
         int endIndex = ByteBufUtil.indexOf(tailerDelimiter, buffer);
+
+        if (isSame) {
+            buffer.resetReaderIndex();
+        }
+
         // TCP 半包，继续接收
         if (endIndex == -1) {
             return;
         }
 
         while (startIndex != -1) {
-            buffer.readerIndex(startIndex);
+            buffer.readerIndex(startIndex + headerDelimiter.readableBytes());
             ByteBuf msg = buffer.readRetainedSlice(endIndex - startIndex - headerDelimiter.readableBytes());
             buffer.skipBytes(tailerDelimiter.readableBytes());
 
@@ -79,7 +96,17 @@ public class DelimiterDecoder extends ByteToMessageDecoder {
                 return;
             }
             buffer.readerIndex(startIndex);
+            if (isSame) {
+                buffer.markReaderIndex();
+                buffer.skipBytes(headerDelimiter.readableBytes());
+            }
+
             endIndex = ByteBufUtil.indexOf(tailerDelimiter, buffer);
+
+            if (isSame) {
+                buffer.resetReaderIndex();
+            }
+
             // TCP 半包，继续接收
             if (endIndex == -1) {
                 return;
