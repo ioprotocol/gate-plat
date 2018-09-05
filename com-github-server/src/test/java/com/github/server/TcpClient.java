@@ -1,6 +1,7 @@
 package com.github.server;
 
 import com.google.common.collect.Lists;
+import io.netty.buffer.ByteBuf;
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.VertxOptions;
 import org.apache.logging.log4j.LogManager;
@@ -29,9 +30,8 @@ public class TcpClient {
 	private static final List<String> MSGS = Lists.newArrayList();
 	private static int index = 0;
 	static {
-		MSGS.add("2323010101012323");
-		MSGS.add("232301010101020202");
-		MSGS.add("010101010202022323");
+		MSGS.add("7e7d017d0223230101010163026301");
+		MSGS.add("23237e");
 	}
 
 	public static void main(String[] args) {
@@ -76,7 +76,6 @@ public class TcpClient {
 					if (index >= MSGS.size()) {
 						index = 0;
 						vertx.cancelTimer(id);
-					    client.close();
 					}
 				});
 			}
@@ -84,6 +83,9 @@ public class TcpClient {
 	}
 
 	private void messageHandler(Object msg) {
+		ByteBuf byteBuf = (ByteBuf) msg;
+		System.out.println("cli:" + ByteBufUtil.hexDump(byteBuf));
+		byteBuf.skipBytes(byteBuf.readableBytes());
 	}
 
 	private NetClientOptions createNetOptions() {

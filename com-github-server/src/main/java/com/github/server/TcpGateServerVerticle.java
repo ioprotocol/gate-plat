@@ -1,8 +1,9 @@
 package com.github.server;
 
-import com.github.app.utils.JacksonUtils;
 import com.github.gate.coder.DelimiterDecoder;
 import com.github.gate.coder.DelimiterEncoder;
+
+import com.github.gate.coder.EscapCoder;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.ChannelPipeline;
@@ -49,9 +50,16 @@ public class TcpGateServerVerticle extends AbstractVerticle {
 	protected void clientConnected(NetSocket socket) {
 		NetSocketInternal netSocketInternal = (NetSocketInternal) socket;
 		ChannelPipeline pipeline = netSocketInternal.channelHandlerContext().pipeline();
-		pipeline.addBefore("handler", "delimiterEncoder", new DelimiterEncoder("2323", "2323"));
-		pipeline.addBefore("handler", "delimiterDecoder", new DelimiterDecoder("2323", "2323"));
+		pipeline.addBefore("handler", "delimiterEncoder", new DelimiterEncoder("7e", "7e"));
+		pipeline.addBefore("handler", "delimiterDecoder", new DelimiterDecoder("7e", "7e"));
+		pipeline.addBefore("handler", "escaperCodec1", new EscapCoder("7e", "7d02"));
+		pipeline.addBefore("handler", "escaperCodec2", new EscapCoder("7d", "7d01"));
 		netSocketInternal.messageHandler(this::messageHandler);
+		vertx.setTimer(6000, id -> {
+			ByteBuf buf = netSocketInternal.channelHandlerContext().alloc().buffer();
+			buf.writeBytes(ByteBufUtil.decodeHexDump("7e7d0808090901010202636301"));
+			netSocketInternal.writeMessage(buf);
+		});
 	}
 
 	public void messageHandler(Object message) {
