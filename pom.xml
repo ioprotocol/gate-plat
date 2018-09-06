@@ -25,7 +25,6 @@
     <properties>
         <vertx.version>3.5.3</vertx.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <bookkeeper.version>4.7.0</bookkeeper.version>
         <zookeeper.version>3.5.3-beta</zookeeper.version>
         <curator.version>4.0.0</curator.version>
     </properties>

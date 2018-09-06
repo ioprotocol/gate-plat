@@ -1,10 +1,10 @@
 package com.github.server;
 
-import io.vertx.core.AbstractVerticle;
-import io.vertx.core.DeploymentOptions;
-import io.vertx.core.Future;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import io.vertx.core.AbstractVerticle;
+import io.vertx.core.Future;
 
 /**
  * 托管服务
@@ -17,26 +17,12 @@ public class ServerDaemonVerticle extends AbstractVerticle {
 
     @Override
     public void start(Future<Void> startFuture) throws Exception {
-        vertx.executeBlocking(future -> {
-            vertx.deployVerticle(ZookeeperServerVerticle.class, new DeploymentOptions().setConfig(config()), ar -> {
-                if (ar.succeeded()) {
-                    future.complete(ar.result());
-                    logger.info("deploy zookeeper service success");
-                } else {
-                    future.fail(ar.cause());
-                }
-            });
-        }, result -> {
-            if (result.succeeded()) {
-                startFuture.complete();
-            } else {
-                startFuture.fail(result.cause());
-            }
-        });
+        startFuture.complete();
+        logger.info("ServerDaemonVerticle start success");
     }
 
     @Override
     public void stop(Future<Void> stopFuture) throws Exception {
-        super.stop(stopFuture);
+        stopFuture.complete();
     }
 }

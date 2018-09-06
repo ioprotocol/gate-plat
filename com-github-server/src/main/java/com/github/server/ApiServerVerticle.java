@@ -87,7 +87,7 @@ public class ApiServerVerticle extends AbstractVerticle {
                     logger.info("api server start successfully, bind port: " + server.actualPort());
                     future.complete();
                 } else {
-                    logger.error("api server start failed, reason:" + ar.cause().getLocalizedMessage());
+                    logger.error("api server start failed ", ar.cause());
                     future.fail(ar.cause());
                 }
             });

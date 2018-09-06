@@ -25,8 +25,8 @@ import org.aspectj.weaver.loadtime.Agent;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.ea.agentloader.AgentLoader;
 
@@ -35,7 +35,7 @@ import io.prometheus.client.hotspot.DefaultExports;
 
 public class ZooKeeperStarter {
     public static void main(String[] args) throws Exception {
-        start(args, "8000");
+        start(args, "7000");
     }
 
     protected static void start(String[] args, String defaultStatsPort) throws Exception {
@@ -48,7 +48,7 @@ public class ZooKeeperStarter {
         // Start Jetty to serve stats
         int port = Integer.parseInt(System.getProperties().getProperty("stats_server_port", defaultStatsPort));
 
-        log.info("Starting ZK stats HTTP server at port {}", port);
+        logger.info("Starting ZK stats HTTP server at port {}", port);
         InetSocketAddress httpEndpoint = InetSocketAddress.createUnresolved("0.0.0.0", port);
 
         Server server = new Server(httpEndpoint);
@@ -59,7 +59,7 @@ public class ZooKeeperStarter {
         try {
             server.start();
         } catch (Exception e) {
-            log.error("Failed to start HTTP server at port {}. Use \"-Dstats_server_port=1234\" to change port number",
+            logger.error("Failed to start HTTP server at port {}. Use \"-Dstats_server_port=1234\" to change port number",
                     port, e);
             throw e;
         }
@@ -68,5 +68,5 @@ public class ZooKeeperStarter {
         QuorumPeerMain.main(args);
     }
 
-    private static final Logger log = LoggerFactory.getLogger(ZooKeeperStarter.class);
+    private static final Logger logger = LogManager.getLogger(ZooKeeperStarter.class);
 }

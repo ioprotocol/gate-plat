@@ -24,6 +24,10 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 public class ApplicationBoot {
 
@@ -84,39 +88,52 @@ public class ApplicationBoot {
                         DeploymentOptions deploymentOptions = new DeploymentOptions();
                         deploymentOptions.setConfig(JsonObject.mapFrom(AppServerConfigLoader.getServerCfg()));
 
-                        vertx.deployVerticle(ApiServerVerticle.class, deploymentOptions, ar -> {
-                            if (ar.succeeded()) {
-                            } else {
-                                vertx.close();
-                                System.exit(-2);
-                            }
-                        });
-                        break;
-                    }
-                    case ZK: {
-                        Vertx vertx = VertxFactory.vertx();
-                        DeploymentOptions deploymentOptions = new DeploymentOptions();
-                        deploymentOptions.setConfig(JsonObject.mapFrom(AppServerConfigLoader.getServerCfg()));
+                        CompletableFuture<String> zkFuture = new CompletableFuture<>();
+                        CompletableFuture<String> apiFuture = new CompletableFuture<>();
+                        CompletableFuture<String> deamonServerFuture = new CompletableFuture<>();
+
                         vertx.deployVerticle(ZookeeperServerVerticle.class, deploymentOptions, ar -> {
                             if (ar.succeeded()) {
+                                zkFuture.complete(ar.result());
                             } else {
-                                vertx.close();
-                                System.exit(-2);
+                                zkFuture.completeExceptionally(ar.cause());
                             }
                         });
-                        break;
-                    }
-                    case DAEMON: {
-                        Vertx vertx = VertxFactory.vertx();
-                        DeploymentOptions deploymentOptions = new DeploymentOptions();
-                        deploymentOptions.setConfig(JsonObject.mapFrom(AppServerConfigLoader.getServerCfg()));
 
-                        vertx.deployVerticle(ServerDaemonVerticle.class, deploymentOptions, ar -> {
-                            if (ar.succeeded()) {
-                            } else {
+                        zkFuture.whenComplete((aVoid, throwable) -> {
+                            vertx.deployVerticle(ApiServerVerticle.class, deploymentOptions, ar -> {
+                                if (ar.succeeded()) {
+                                    apiFuture.complete(ar.result());
+                                } else {
+                                    apiFuture.completeExceptionally(ar.cause());
+                                }
+                            });
+                        });
+
+                        zkFuture.whenComplete((aVoid, cause) -> {
+                            vertx.deployVerticle(ServerDaemonVerticle.class, deploymentOptions, ar -> {
+                                if (ar.succeeded()) {
+                                    deamonServerFuture.complete(ar.result());
+                                } else {
+                                    deamonServerFuture.completeExceptionally(ar.cause());
+                                }
+                            });
+                        });
+
+                        CompletableFuture.allOf(zkFuture, apiFuture, deamonServerFuture).whenComplete((aVoid, throwable) -> {
+                            System.out.println("All Verticle deploy success");
+                        }).exceptionally(throwable -> {
+                            try {
+                                vertx.undeploy(zkFuture.get());
+                                vertx.undeploy(apiFuture.get());
+                                vertx.undeploy(deamonServerFuture.get());
                                 vertx.close();
-                                System.exit(-2);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            } catch (ExecutionException e) {
+                                e.printStackTrace();
                             }
+                            return null;
                         });
                         break;
                     }
