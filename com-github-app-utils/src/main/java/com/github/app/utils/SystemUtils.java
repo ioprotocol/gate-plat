@@ -3,8 +3,9 @@ package com.github.app.utils;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Enumeration;
+import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import com.google.common.collect.Lists;
 
 public class SystemUtils {
 
@@ -13,8 +14,8 @@ public class SystemUtils {
 	 * 
 	 * @return
 	 */
-	public static String getLocalIpAddress() {
-		String serverIp = null;
+	public static List<String> getLocalIpAddress() {
+	    List<String> ips = Lists.newArrayList();
 		try {
 			Enumeration netInterfaces = NetworkInterface.getNetworkInterfaces();
 			while (netInterfaces.hasMoreElements()) {
@@ -28,22 +29,39 @@ public class SystemUtils {
 						continue;
 					if (!addr.isSiteLocalAddress())
 						continue;
-					serverIp = addr.getHostAddress();
+					ips.add(addr.getHostAddress());
 				}
 			}
 
-			if (StringUtils.isEmpty(serverIp)) {
-				serverIp = InetAddress.getLocalHost().getHostAddress();
+			if (ips.isEmpty()) {
+				ips.add(InetAddress.getLocalHost().getHostAddress());
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		return serverIp;
+		return ips;
+	}
+
+	/**
+	 * 获取计算机名称
+	 *
+	 * @return
+	 */
+	public static String getHostName() {
+		try {
+			InetAddress addr = InetAddress.getLocalHost();
+			String hostName = addr.getHostName();
+			return hostName;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	public static void main(String[] args) {
-		System.out.println(getLocalIpAddress());
+		System.out.println(JacksonUtils.serializePretty(getLocalIpAddress()));
+		System.out.println(getHostName());
 	}
 }
