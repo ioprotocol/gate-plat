@@ -20,7 +20,6 @@
         <module>com-github-server</module>
         <module>com-github-cache</module>
         <module>com-github-zkbooter</module>
-        <module>com-github-zkutils</module>
     </modules>
 
     <properties>
