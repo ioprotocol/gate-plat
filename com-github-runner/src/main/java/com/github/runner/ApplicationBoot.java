@@ -120,9 +120,7 @@ public class ApplicationBoot {
                             });
                         });
 
-                        CompletableFuture.allOf(zkFuture, apiFuture, deamonServerFuture).whenComplete((aVoid, throwable) -> {
-                            System.out.println("All Verticle deploy success");
-                        }).exceptionally(throwable -> {
+                        CompletableFuture.allOf(zkFuture, apiFuture, deamonServerFuture).exceptionally(throwable -> {
                             try {
                                 vertx.undeploy(zkFuture.get());
                                 vertx.undeploy(apiFuture.get());
@@ -134,7 +132,7 @@ public class ApplicationBoot {
                                 e.printStackTrace();
                             }
                             return null;
-                        });
+                        }).join();
                         break;
                     }
                     default: {
