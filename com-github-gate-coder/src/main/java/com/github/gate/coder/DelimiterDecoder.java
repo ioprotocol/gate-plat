@@ -20,6 +20,10 @@ public class DelimiterDecoder extends ByteToMessageDecoder {
     private final ByteBuf tailerDelimiter = UnpooledByteBufAllocator.DEFAULT.buffer(4);
     private final boolean isSame;
 
+    public DelimiterDecoder(DelimiterCoderConfig config) {
+        this(ByteBufUtil.decodeHexDump(config.getHeader()), ByteBufUtil.decodeHexDump(config.getTailer()));
+    }
+
     public DelimiterDecoder(String headerDelimiter, String tailerDelimiter) {
         this(ByteBufUtil.decodeHexDump(headerDelimiter), ByteBufUtil.decodeHexDump(tailerDelimiter));
     }

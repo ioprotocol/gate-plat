@@ -17,6 +17,10 @@ public class JsonCoder extends MessageToMessageCodec<ByteBuf, JsonObject> {
         protocolFactory.addProtocolCoder(new ProtocolCoder(properties));
     }
 
+    public JsonCoder(JsonCoderConfig config) {
+        protocolFactory.addProtocolCoder(new ProtocolCoder(config.getProtocolProperties()));
+    }
+
     @Override
     protected void encode(ChannelHandlerContext ctx, JsonObject msg, List<Object> out) throws Exception {
         out.add(protocolFactory.encode(ctx.alloc().buffer(), msg));

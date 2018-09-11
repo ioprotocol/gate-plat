@@ -25,6 +25,10 @@ public class EscapCoder extends MessageToMessageCodec<ByteBuf, ByteBuf> {
         this.escap.writeBytes(ByteBufUtil.decodeHexDump(dest));
     }
 
+    public EscapCoder(EscapCoderConfig config) {
+        this(config.getRaw(), config.getEscap());
+    }
+
     @Override
     protected void encode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) throws Exception {
         ByteBuf outMsg = ctx.alloc().buffer(msg.readableBytes() * 2);

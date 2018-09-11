@@ -1,10 +1,11 @@
 package com.github.server.config;
 
+import com.github.gate.coder.CoderConfig;
 import com.google.common.collect.Lists;
 
 import java.util.List;
 
-public class GatewayConfig {
+public class TcpGatewayConfig {
     private String host;
     private Integer port;
     private boolean tcpNoDelay = true;

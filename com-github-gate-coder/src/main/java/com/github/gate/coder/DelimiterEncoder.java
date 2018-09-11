@@ -14,6 +14,10 @@ public class DelimiterEncoder extends MessageToMessageEncoder<ByteBuf> {
     private final byte[] headerDelimiter;
     private final byte[] tailerDelimiter;
 
+    public DelimiterEncoder(DelimiterCoderConfig config) {
+        this(ByteBufUtil.decodeHexDump(config.getHeader()), ByteBufUtil.decodeHexDump(config.getTailer()));
+    }
+
     public DelimiterEncoder(String headerDelimiter, String tailerDelimiter) {
         this(ByteBufUtil.decodeHexDump(headerDelimiter), ByteBufUtil.decodeHexDump(tailerDelimiter));
     }

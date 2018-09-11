@@ -1,4 +1,4 @@
-package com.github.server.config;
+package com.github.gate.coder;
 
 public class DelimiterCoderConfig implements CoderConfig{
 
