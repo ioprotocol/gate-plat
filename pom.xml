@@ -23,7 +23,7 @@
     </modules>
 
     <properties>
-        <vertx.version>3.5.3</vertx.version>
+        <vertx.version>3.5.4</vertx.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <zookeeper.version>3.5.3-beta</zookeeper.version>
         <curator.version>4.0.0</curator.version>
