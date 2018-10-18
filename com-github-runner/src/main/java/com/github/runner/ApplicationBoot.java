@@ -1,12 +1,12 @@
 package com.github.runner;
 
-import com.github.app.spi.utils.VertxFactory;
-import com.github.server.ApiServerVerticle;
 import com.github.app.spi.config.AppServerConfig;
 import com.github.app.spi.services.impl.SystemOperationServiceImpl;
 import com.github.app.spi.utils.AppServerConfigLoader;
+import com.github.app.spi.utils.VertxFactory;
 import com.github.app.utils.JacksonUtils;
 import com.github.app.utils.ServerEnvConstant;
+import com.github.server.ApiServerVerticle;
 import com.github.server.ServerDaemonVerticle;
 import com.github.server.ZookeeperServerVerticle;
 import io.vertx.core.DeploymentOptions;
@@ -26,8 +26,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
 
 public class ApplicationBoot {
 
